@@ -1,0 +1,75 @@
+@startuml
+title Diagramme de séquence - Soumission d'une offre de stage (3 étapes)
+
+actor "Étudiant" as E
+participant "OffreStageServlet" as S
+participant "OffreStageBean" as B
+participant "EntityManager" as EM
+database "Base de données" as DB
+
+E -> S: POST /offres?action=nouveau (Étape 1: Entreprise)
+activate S
+S -> S: Récupère les paramètres (nomEntreprise, secteur, etc.)
+S -> S: Valide les champs
+S -> S: Stocke en session (etape1)
+
+S -> E: Redirection vers Étape 2
+deactivate S
+
+E -> S: GET /offres?action=etape2 (Étape 2: Stage)
+activate S
+S -> S: Récupère les paramètres (titre, description, dates)
+S -> S: Valide les dates (dateDebut < dateFin)
+S -> S: Stocke en session (etape2)
+
+S -> E: Redirection vers Étape 3
+deactivate S
+
+E -> S: POST /offres?action=etape3 (Étape 3: Documents)
+activate S
+S -> S: Récupère les paramètres de session (etape1, etape2)
+S -> S: Traite les fichiers uploadés (CV, lettre motivation)
+S -> S: Valide la présence des documents obligatoires
+
+S -> B: soumettreOffre(etudiant, entreprise, offreData, pieces)
+activate B
+B -> B: Crée l'objet OffreStage
+B -> B: Définit le statut = OFFRE_SOUMISE
+B -> B: Définit la dateSoumission = now()
+B -> EM: persist(offreStage)
+activate EM
+EM -> DB: INSERT INTO OffreStage
+DB --> EM: ID généré
+EM --> B: OffreStage persistée
+deactivate EM
+
+B -> EM: persist(pieceJointe) pour chaque document
+activate EM
+EM -> DB: INSERT INTO PieceJointe
+EM --> B: Pièces jointes persistées
+deactivate EM
+
+B --> S: OffreStage créée
+deactivate B
+
+S -> S: Nettoie la session (etape1, etape2)
+S -> E: Redirection vers /offres?success=1
+deactivate S
+
+E -> S: GET /offres (Liste des offres)
+activate S
+S -> B: findByEtudiant(etudiantId)
+activate B
+B -> EM: createQuery("SELECT o FROM OffreStage o WHERE o.etudiant.id = :id")
+activate EM
+EM -> DB: SELECT * FROM OffreStage WHERE etudiant_id = ?
+DB --> EM: Liste des offres
+EM --> B: List<OffreStage>
+deactivate EM
+B --> S: Liste des offres
+deactivate B
+S -> S: Ajoute la liste en attribut request
+S -> E: Forward vers liste-offres.jsp
+deactivate S
+
+@enduml

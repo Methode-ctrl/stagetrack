@@ -1,0 +1,447 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{plantuml}
+
+\geometry{margin=2.5cm}
+
+% Configuration des listings de code
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\title{\textbf{StageTrack} \\ Système de Gestion des Stages \\ Université Polytechnique de Gitega (UPG)}
+\author{Département de Génie Logiciel \\ BAC3 - Année Académique 2025-2026}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+StageTrack est une application web développée pour l'Université Polytechnique de Gitega (UPG), permettant la gestion complète du processus de stage des étudiants en Génie Logiciel. Le système couvre l'ensemble du flux, de la soumission des offres à l'attribution des notes finales, en passant par la validation, le suivi et l'évaluation. L'application utilise les technologies Jakarta EE 10 (Servlet 6.0, JSP 3.0, EJB 4.0, JPA 3.1, CDI 4.0) et est déployée sur un serveur GlassFish 7+.
+\end{abstract}
+
+\tableofcontents
+
+\chapter{Introduction}
+
+\section{Contexte}
+L'Université Polytechnique de Gitega (UPG), à travers son Département de Génie Logiciel, forme des étudiants aux métiers de l'informatique. Dans le cadre de leur cursus en BAC3, les étudiants doivent effectuer un stage en entreprise d'une durée de trois mois. La gestion actuelle des stages se fait de manière manuelle, ce qui engendre des problèmes de suivi, de traçabilité et de communication entre les différents acteurs.
+
+\section{Problématique}
+Les principales difficultés rencontrées sont :
+\begin{itemize}
+    \item Manque de centralisation des informations
+    \item Difficulté de suivre l'état d'avancement des dossiers
+    \item Processus de validation opaque pour les étudiants
+    \item Risque de perte de documents
+    \item Calcul manuel des notes finales sujet à des erreurs
+\end{itemize}
+
+\section{Solution proposée}
+StageTrack est une application web qui automatise et centralise la gestion des stages. Elle offre :
+\begin{itemize}
+    \item Un workflow complet de 11 étapes pour le suivi des offres
+    \item Une gestion documentaire intégrée
+    \item Un système de rôles (Admin, Superviseur, Étudiant)
+    \item Une génération automatique des conventions
+    \item Un calcul automatique des notes finales
+    \item Des tableaux de bord statistiques
+\end{itemize}
+
+\chapter{Analyse des besoins}
+
+\section{Acteurs du système}
+Le système identifie trois types d'acteurs avec des permissions spécifiques :
+
+\subsection{Étudiant}
+\begin{itemize}
+    \item Soumettre une offre de stage (processus en 3 étapes)
+    \item Suivre le statut de son offre en temps réel
+    \item Soumettre son rapport de stage (processus en 2 étapes)
+    \item Consulter ses notes et mention
+    \item Télécharger sa convention de stage
+\end{itemize}
+
+\subsection{Superviseur}
+\begin{itemize}
+    \item Valider ou rejeter les offres de stage
+    \item Ouvrir le dossier de stage et assigner un superviseur
+    \item Demander des corrections sur les dossiers incomplets
+    \item Évaluer les rapports de stage
+    \item Attribuer les notes (stage, rapport, présentation)
+    \item Générer des statistiques de suivi
+\end{itemize}
+
+\subsection{Administrateur}
+\begin{itemize}
+    \item Gérer l'ensemble des utilisateurs (CRUD)
+    \item Gérer les entreprises partenaires
+    \item Archiver les dossiers de stage terminés
+    \item Générer des rapports globaux
+    \item Accès complet à toutes les fonctionnalités
+\end{itemize}
+
+\section{Workflow de l'offre de stage}
+Le système implémente un workflow strict de 11 étapes :
+\begin{enumerate}
+    \item \textbf{OFFRE\_SOUMISE} : L'étudiant soumet son offre
+    \item \textbf{EN\_VALIDATION} : L'offre est en cours de validation
+    \item \textbf{DOSSIER\_INCOMPLET} : Des corrections sont demandées
+    \item \textbf{VALIDEE} : L'offre est validée
+    \item \textbf{STAGE\_EN\_COURS} : Le stage a commencé
+    \item \textbf{PAUSE} : Le stage est en pause
+    \item \textbf{RAPPORT\_SOUMIS} : Le rapport est soumis
+    \item \textbf{EN\_CORRECTION} : Le rapport nécessite des corrections
+    \item \textbf{RAPPORT\_VALIDE} : Le rapport est validé
+    \item \textbf{NOTE\_ATTRIBUEE} : Les notes sont attribuées
+    \item \textbf{ARCHIVE} : Le dossier est archivé
+\end{enumerate}
+
+\section{Calcul des notes}
+La note finale est calculée selon la formule :
+\begin{equation}
+NoteFinale = (NoteStage \times 0.40) + (NoteRapport \times 0.40) + (NotePresentation \times 0.20)
+\end{equation}
+
+Les mentions sont attribuées selon le barème :
+\begin{itemize}
+    \item 18 - 20 : Très Bien
+    \item 16 - 17.99 : Bien
+    \item 14 - 15.99 : Assez Bien
+    \item 12 - 13.99 : Passable
+    \item < 12 : Insuffisant
+\end{itemize}
+
+\chapter{Architecture technique}
+
+\section{Choix technologiques}
+Le projet respecte strictement les contraintes imposées :
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{Couche} & \textbf{Technologie} \\
+\midrule
+Présentation & Servlet 6.0, JSP 3.0 + JSTL 3.0 \\
+Logique métier & EJB 3.2+ (Session Beans) \\
+Persistance & JPA 3.1 + EclipseLink 3.0 \\
+Injection de dépendances & CDI 4.0 \\
+Serveur d'application & GlassFish 7+ \\
+Base de données & MySQL 8.0 \\
+Build & Maven 3.8+ \\
+\bottomrule
+\end{tabular}
+\caption{Stack technique}
+\end{table}
+
+\section{Architecture en couches}
+L'application suit une architecture en couches stricte :
+
+\begin{itemize}
+    \item \textbf{Couche Présentation} : Servlets et JSP (avec JSTL, zéro scriptlet)
+    \item \textbf{Couche Métier} : EJB Session Beans (@Stateless)
+    \item \textbf{Couche Persistance} : Entités JPA et EntityManager
+    \item \textbf{Couche Injection} : CDI (@Inject)
+\end{itemize}
+
+\section{Diagramme de classes}
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../uml/class-diagram.png}
+\caption{Diagramme de classes du système}
+\end{figure}
+
+\chapter{Conception détaillée}
+
+\section{Entités JPA}
+
+\subsection{Utilisateur (Classe mère)}
+\begin{lstlisting}[language=Java, caption=Entité Utilisateur]
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Utilisateur {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String email;
+    private String motDePasse;
+    private String nom;
+    private String prenom;
+    
+    @Enumerated(EnumType.STRING)
+    private Role role;
+}
+\end{lstlisting}
+
+\subsection{OffreStage (Entité centrale)}
+L'entité OffreStage est le pivot du système avec ses 11 statuts et ses relations :
+\begin{itemize}
+    \item ManyToOne avec Etudiant
+    \item ManyToOne avec Superviseur
+    \item ManyToOne avec Entreprise
+    \item OneToMany avec PieceJointe
+    \item OneToOne avec Convention
+    \item OneToOne avec RapportStage
+\end{itemize}
+
+\section{EJB Session Beans}
+
+\subsection{OffreStageBean}
+Gère le workflow complet des offres avec les méthodes :
+\begin{itemize}
+    \item soumettreOffre() - Soumission initiale
+    \item ouvrirDossier() - Ouverture du dossier
+    \item demanderCorrection() - Demande de corrections
+    \item validerOffre() - Validation finale
+    \item demarrerStage() - Démarrage du stage
+    \item mettreEnPause() / reprendreStage()
+\end{itemize}
+
+\subsection{NoteBean}
+Responsable du calcul des notes :
+\begin{lstlisting}[language=Java, caption=Calcul de la note finale]
+public double calculerNoteFinale(double noteStage, double noteRapport, double notePresentation) {
+    return (noteStage * 0.40) + (noteRapport * 0.40) + (notePresentation * 0.20);
+}
+
+public String calculerMention(double noteFinale) {
+    if (noteFinale >= 18) return "Très Bien";
+    else if (noteFinale >= 16) return "Bien";
+    else if (noteFinale >= 14) return "Assez Bien";
+    else if (noteFinale >= 12) return "Passable";
+    else return "Insuffisant";
+}
+\end{lstlisting}
+
+\section{Servlets et Navigation}
+
+\subsection{AuthServlet}
+Gère l'authentification avec :
+\begin{itemize}
+    \item GET /login - Affichage du formulaire
+    \item POST /login - Traitement de la connexion
+    \item GET /logout - Déconnexion
+\end{itemize}
+
+\subsection{OffreStageServlet}
+Gère le processus en 3 étapes :
+\begin{itemize}
+    \item Étape 1 : Informations entreprise
+    \item Étape 2 : Détails du stage
+    \item Étape 3 : Documents (CV, lettre, attestation)
+\end{itemize}
+
+\section{Sécurité et Filtrage}
+AuthFilter intercepte toutes les requêtes et vérifie :
+\begin{itemize}
+    \item Présence d'une session utilisateur
+    \item Correspondance entre le rôle et l'URL demandée
+    \item Redirection vers la page de login si nécessaire
+\end{itemize}
+
+\chapter{Implémentation}
+
+\section{Structure du projet}
+\begin{verbatim}
+stagetrack/
+├── pom.xml
+├── src/main/java/bi/upg/stagetrack/
+│   ├── entity/       (9 entités JPA)
+│   ├── ejb/          (4 Session Beans)
+│   ├── servlet/      (8+ Servlets)
+│   ├── filter/       (AuthFilter)
+│   └── enums/        (4 énumérations)
+├── src/main/webapp/
+│   ├── WEB-INF/
+│   │   ├── web.xml
+│   │   ├── views/    (16+ fichiers JSP)
+│   │   └── lib/
+│   └── css/style.css
+└── src/main/resources/META-INF/
+    ├── persistence.xml
+    └── beans.xml
+\end{verbatim}
+
+\section{Exemple de code : Soumission d'offre}
+
+\begin{lstlisting}[language=Java, caption=Extrait de OffreStageServlet - Étape 3]
+@Inject
+private OffreStageBean offreStageBean;
+
+protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    // Récupération des données de session (étapes 1 et 2)
+    OffreStage offre = (OffreStage) request.getSession().getAttribute("etape1");
+    // Traitement de l'upload de fichiers
+    Part cvPart = request.getPart("cv");
+    String cvFileName = extractFileName(cvPart);
+    // Sauvegarde en base via EJB
+    offreStageBean.soumettreOffre(etudiant, entreprise, offre, pieces);
+    // Nettoyage de la session
+    request.getSession().removeAttribute("etape1");
+}
+\end{lstlisting}
+
+\section{Interface utilisateur}
+Les vues JSP utilisent exclusivement JSTL pour la logique de présentation :
+\begin{itemize}
+    \item Aucun scriptlet (<\% \%>) autorisé
+    \item Utilisation des tags <c:forEach>, <c:if>, <fmt:formatDate>
+    \item Formulaires avec validation côté client et serveur
+    \item Affichage des messages de succès/erreur
+\end{itemize}
+
+\section{Base de données}
+Le script SQL fourni crée :
+\begin{itemize}
+    \item 9 tables correspondant aux entités JPA
+    \item 4 énumérations stockées en ENUM MySQL
+    \item Clés étrangères avec contraintes d'intégrité
+    \item Index pour optimiser les performances
+    \item Vues pour les statistiques
+    \item Données d'exemple pour les tests
+\end{itemize}
+
+\chapter{Tests et validation}
+
+\section{Tests effectués}
+\begin{itemize}
+    \item Test du workflow complet (11 étapes)
+    \item Test des rôles et permissions (AuthFilter)
+    \item Test de l'upload de fichiers
+    \item Test du calcul des notes
+    \item Test de la génération de convention
+    \item Test de la persistance JPA
+\end{itemize}
+
+\section{Cas de test : Soumission d'offre}
+\begin{enumerate}
+    \item L'étudiant se connecte
+    \item Il accède à "Nouvelle offre"
+    \item Il remplit l'étape 1 (entreprise) → Sauvegardé en session
+    \item Il remplit l'étape 2 (stage) → Sauvegardé en session
+    \item Il upload les documents (étape 3) → Persisté en base
+    \item Redirection vers la liste avec message de succès
+\end{enumerate}
+
+\chapter{Déploiement}
+
+\section{Prérequis}
+\begin{itemize}
+    \item JDK 11 ou supérieur
+    \item GlassFish 7+ installé et configuré
+    \item MySQL 8.0+ avec base stagetrack\_db créée
+    \item Maven 3.8+ installé
+\end{itemize}
+
+\section{Procédure de déploiement}
+\begin{enumerate}
+    \item Exécuter le script SQL : \texttt{mysql -u root -p < sql/init.sql}
+    \item Configurer le pool de connexions dans GlassFish (JDBC Resource)
+    \item Modifier \texttt{persistence.xml} si nécessaire (URL, user, password)
+    \item Builder le projet : \texttt{mvn clean package}
+    \item Déployer le WAR : \texttt{mvn glassfish:deploy} ou via la console admin
+    \item Accéder à \texttt{http://localhost:8080/stagetrack}
+\end{enumerate}
+
+\section{Utilisateurs de test}
+\begin{table}[h]
+\centering
+\begin{tabular}{llll}
+\toprule
+\textbf{Email} & \textbf{Mot de passe} & \textbf{Rôle} & \textbf{Nom} \\
+\midrule
+admin@upg.br & password123 & ADMIN & Admin System \\
+s.kalisa@upg.br & password123 & SUPERVISEUR & Kalisa Jean \\
+e.niyonzima@upg.br & password123 & ETUDIANT & Niyonzima Eric \\
+\bottomrule
+\end{tabular}
+\caption{Comptes de test}
+\end{table}
+
+\chapter{Conclusion}
+
+\section{Bilan du projet}
+StageTrack répond à l'ensemble des exigences formulées :
+\begin{itemize}
+    \item Workflow complet de 11 étapes implémenté
+    \item Respect strict des technologies imposées (Jakarta EE 10)
+    \item Zéro scriptlet dans les JSP
+    \item Logique métier exclusivement dans les EJB
+    \item Injection de dépendances CDI fonctionnelle
+    \item Gestion des rôles opérationnelle
+\end{itemize}
+
+\section{Difficultés rencontrées}
+\begin{itemize}
+    \item Migration de javax vers jakarta (Java EE vers Jakarta EE)
+    \item Gestion des transactions dans les EJB
+    \item Upload de fichiers multipart avec Servlet 6.0
+    \item Maintien de la cohérence des états (11 statuts)
+\end{itemize}
+
+\section{Améliorations futures}
+\begin{itemize}
+    \item Envoi de notifications par email
+    \item Génération PDF des conventions (iText)
+    \item API REST pour application mobile
+    \item Tableau de bord avec graphiques (Chart.js)
+    \item Historique complet des actions (audit trail)
+\end{itemize}
+
+\appendix
+\chapter{Diagrammes UML}
+
+\section{Diagramme de cas d'utilisation}
+Voir fichier \texttt{docs/uml/use-case-diagram.puml}
+
+\section{Diagramme de classes complet}
+Voir fichier \texttt{docs/uml/class-diagram.puml}
+
+\section{Diagrammes de séquence}
+\begin{itemize}
+    \item Soumission d'offre : \texttt{sequence-offre-stage.puml}
+    \item Validation d'offre : \texttt{sequence-validation.puml}
+    \item Soumission de rapport : \texttt{sequence-rapport-submission.puml}
+\end{itemize}
+
+\chapter{Script SQL}
+Le script complet d'initialisation se trouve dans \texttt{sql/init.sql}. Il contient :
+\begin{itemize}
+    \item Création de la base et des tables
+    \item Insertion des données d'exemple
+    \item Création des vues pour les statistiques
+    \item Procédures stockées (optionnel)
+\end{itemize}
+
+\end{document}

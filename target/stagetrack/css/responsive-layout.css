@@ -1,0 +1,184 @@
+/* ============================================================
+   STAGETRACK – responsive-layout.css
+   Ajustements de layout pour le sidebar collapsible
+   ============================================================ */
+
+:root {
+  --sidebar-width: 292px;
+  --sidebar-width-collapsed: 80px;
+}
+
+/* ── Layout avec sidebar ────────────────────────────────────– */
+body {
+  padding-left: var(--sidebar-width);
+  transition: padding-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.sidebar-collapsed {
+  padding-left: var(--sidebar-width-collapsed);
+}
+
+/* ── Ajustements au collapse ────────────────────────────────– */
+.main-content {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Responsive tablette/mobile ────────────────────────────– */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 260px;
+  }
+
+  body {
+    padding-left: var(--sidebar-width);
+  }
+
+  .main-content {
+    padding: 1.5rem 0 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 100%;
+    --sidebar-width-collapsed: 0px;
+  }
+
+  body {
+    padding-left: 0;
+    padding-bottom: 80px; /* Espace pour le bottom bar */
+  }
+
+  body.sidebar-collapsed {
+    padding-left: 0;
+  }
+
+  .main-content {
+    padding: 1rem 0 2rem;
+  }
+
+  /* Sidebar en bas navigation sur mobile */
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    overflow-y: visible;
+    overflow-x: auto;
+  }
+
+  .sidebar.is-open {
+    height: 100vh;
+    bottom: auto;
+    top: 0;
+    flex-direction: column;
+  }
+
+  .sidebar-header {
+    display: none;
+  }
+
+  .sidebar.is-open .sidebar-header {
+    display: flex;
+    padding: 1.5rem 1rem;
+    border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    padding: 0.5rem;
+    gap: 0.25rem;
+  }
+
+  .sidebar.is-open .sidebar-nav {
+    flex-direction: column;
+    padding: 1rem 0.5rem;
+  }
+
+  .nav-link {
+    flex: 1;
+    min-width: 50px;
+  }
+
+  .sidebar.is-open .nav-link {
+    flex: none;
+  }
+
+  .sidebar-footer {
+    display: none;
+  }
+
+  .sidebar.is-open .sidebar-footer {
+    display: flex;
+    padding: 1rem;
+    border-top: 1px solid rgba(100, 200, 255, 0.1);
+  }
+
+  .sidebar-toggle {
+    display: none;
+  }
+
+  /* Animations pour mobile */
+  .sidebar {
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.is-open {
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --sidebar-width: 100%;
+  }
+
+  .main-content {
+    padding: 1rem 0.75rem 2rem;
+  }
+
+  .container {
+    padding: 0 0.75rem;
+  }
+}
+
+/* ── Scroll reveal animation ────────────────────────────────– */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Utilitaires ────────────────────────────────────────────– */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+.text-sm { font-size: 0.875rem; }
+.text-lg { font-size: 1.125rem; }
+.text-xl { font-size: 1.25rem; }
+
+.text-secondary { color: var(--color-text-secondary); }
+.text-muted { color: var(--color-text-muted); }

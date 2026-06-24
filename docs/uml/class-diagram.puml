@@ -1,0 +1,158 @@
+@startuml
+title Diagramme de classes - StageTrack
+
+' Entités JPA
+entity Utilisateur {
+    - id: Long
+    - email: String
+    - motDePasse: String
+    - nom: String
+    - prenom: String
+    - role: Role
+    + getOffres(): List<OffreStage>
+    + getRapports(): List<RapportStage>
+}
+
+entity Etudiant {
+    - matricule: String
+    - niveau: String
+    - specialite: String
+    + getOffres(): List<OffreStage>
+    + getRapports(): List<RapportStage>
+}
+
+entity Superviseur {
+    - specialite: String
+    - telephone: String
+    + getOffresSupervisees(): List<OffreStage>
+}
+
+entity Entreprise {
+    - nom: String
+    - secteurActivite: String
+    - adresse: String
+    - email: String
+    - telephone: String
+    - siteWeb: String
+    + getOffres(): List<OffreStage>
+}
+
+entity OffreStage {
+    - id: Long
+    - titre: String
+    - description: String
+    - dateSoumission: LocalDate
+    - statut: StatutOffre
+    - dateDebut: LocalDate
+    - dateFin: LocalDate
+    - dateValidation: LocalDate
+    - dateDemarrage: LocalDate
+    + soumettre(): void
+    + valider(): void
+    + demanderCorrection(): void
+}
+
+entity PieceJointe {
+    - id: Long
+    - type: TypePiece
+    - nomFichier: String
+    - cheminFichier: String
+    - dateUpload: LocalDate
+}
+
+entity Convention {
+    - id: Long
+    - numero: String
+    - dateGeneration: LocalDate
+    - cheminFichier: String
+    - signee: boolean
+}
+
+entity RapportStage {
+    - id: Long
+    - titre: String
+    - resume: String
+    - competencesAcquises: String
+    - dateSoumission: LocalDate
+    - statut: StatutRapport
+    - nomFichierPdf: String
+    - nomFichierAnnexe: String
+    + soumettre(): void
+    + evaluer(): void
+}
+
+entity Note {
+    - id: Long
+    - noteStage: double
+    - noteRapport: double
+    - notePresentation: double
+    - noteFinale: double
+    - mention: String
+    - dateAttribution: LocalDate
+    + calculerNoteFinale(): double
+    + calculerMention(): String
+}
+
+' Énumérations
+enum Role {
+    ADMIN
+    SUPERVISEUR
+    ETUDIANT
+}
+
+enum StatutOffre {
+    OFFRE_SOUMISE
+    EN_VALIDATION
+    DOSSIER_INCOMPLET
+    VALIDEE
+    STAGE_EN_COURS
+    PAUSE
+    RAPPORT_SOUMIS
+    EN_CORRECTION
+    RAPPORT_VALIDE
+    NOTE_ATTRIBUEE
+    ARCHIVE
+}
+
+enum StatutRapport {
+    BROUILLON
+    SOUMIS
+    EN_CORRECTION
+    VALIDE
+}
+
+enum TypePiece {
+    CV
+    LETTRE_MOTIVATION
+    ATTESTATION_INSCRIPTION
+    AUTRE
+}
+
+' Relations
+Utilisateur <|-- Etudiant
+Utilisateur <|-- Superviseur
+
+Etudiant "1" --> "*" OffreStage: soumet
+Superviseur "1" --> "*" OffreStage: supervise
+Entreprise "1" --> "*" OffreStage: propose
+
+OffreStage "1" --> "*" PieceJointe: contient
+OffreStage "1" --> "0..1" Convention: génère
+OffreStage "1" --> "*" RapportStage: produit
+OffreStage "*" --> "1" Etudiant: appartient à
+OffreStage "*" --> "1" Superviseur: est supervisée par
+OffreStage "*" --> "1" Entreprise: est proposée par
+
+RapportStage "1" --> "0..1" Note: évalué par
+RapportStage "*" --> "1" Etudiant: soumis par
+RapportStage "*" --> "1" OffreStage: concerne
+
+OffreStage --> StatutOffre
+RapportStage --> StatutRapport
+PieceJointe --> TypePiece
+Utilisateur --> Role
+
+note right of OffreStage: Workflow à 11 étapes\navec transitions d'état
+note right of Note: Calcul automatique:\nNoteFinale = 40%S + 40%R + 20%P
+
+@enduml

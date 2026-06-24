@@ -1,0 +1,48 @@
+@startuml
+title Diagramme de séquence - Soumission du rapport de stage (2 étapes)
+
+actor "Étudiant" as E
+participant "RapportServlet" as S
+participant "RapportStageBean" as B
+participant "EntityManager" as EM
+database "Base de données" as DB
+
+E -> S: GET /rapports?action=etape1&idOffre=456
+activate S
+S -> S: Récupère l'offre et les informations du stage
+S -> E: Forward vers rapport-etape1.jsp
+deactivate S
+
+E -> S: POST /rapports?action=etape1 (remplit titre, résumé)
+activate S
+S -> S: Stocke les données en session (etape1)
+S -> E: Redirection vers Etape 2
+deactivate S
+
+E -> S: POST /rapports?action=etape2 (upload PDF + annexes)
+activate S
+S -> S: Récupère les données de session (etape1)
+S -> S: Traite les fichiers uploadés
+S -> B: soumettreRapport(etudiantId, offreId, titre, resume, pdfPath, annexes)
+activate B
+B -> B: Crée l'entité RapportStage
+B -> B: setStatut(SOUMIS)
+B -> B: setDateSoumission(LocalDate.now())
+B -> EM: persist(rapportStage)
+activate EM
+EM -> DB: INSERT INTO RapportStage ...
+DB --> EM: ID généré
+EM --> B: Rapport persistant
+B -> EM: persist(pieceJointe) pour chaque annexe
+activate EM
+EM -> DB: INSERT INTO PieceJointe ...
+EM --> B
+deactivate EM
+B --> S: Rapport créé
+deactivate B
+
+S -> S: Nettoie la session
+S -> E: Redirection vers /rapports?success=1
+deactivate S
+
+@enduml

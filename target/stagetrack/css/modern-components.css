@@ -1,0 +1,515 @@
+/* ============================================================
+   STAGETRACK – modern-components.css
+   Styles améliorés pour boutons, badges, chips et composants
+   ============================================================ */
+
+:root {
+  --color-blue-electric: #00d4ff;
+  --color-blue-dark: #1a1a2e;
+  --color-blue-navy: #16213e;
+  --color-blue-accent: #64c8ff;
+}
+
+/* ── Boutons modernes avec animations fluides ────────────────– */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: var(--transition-spring);
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  white-space: nowrap;
+  will-change: transform;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Effet background animé au hover */
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0);
+  transition: background 0.3s ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.btn:hover::before {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn:active { 
+  transform: scale(0.96) !important;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Style PRIMARY */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(212, 122, 69, 0.3);
+  border: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(212, 122, 69, 0.45);
+  filter: brightness(1.08);
+}
+
+.btn-primary:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Style SECONDARY */
+.btn-secondary {
+  background: transparent;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+  box-shadow: inset 0 0 0 0 var(--color-primary);
+}
+
+.btn-secondary:hover {
+  background: var(--color-primary);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 122, 69, 0.3);
+}
+
+/* Style DANGER */
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2);
+}
+
+.btn-danger:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+  filter: brightness(1.1);
+}
+
+/* Style SUCCESS */
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.2);
+}
+
+.btn-success:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+  filter: brightness(1.1);
+}
+
+/* Style WARNING */
+.btn-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.2);
+}
+
+.btn-warning:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
+  filter: brightness(1.1);
+}
+
+/* Tailles */
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  gap: 0.25rem;
+}
+
+.btn-lg {
+  padding: 0.9rem 2.25rem;
+  font-size: 1rem;
+  gap: 0.75rem;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* ── Badges modernes (pills) ────────────────────────────────– */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: var(--transition-normal);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Status badges avec couleurs élégantes */
+.badge-OFFRE_SOUMISE {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  color: #3730a3;
+}
+
+.badge-EN_VALIDATION {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #0c4a6e;
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+.badge-DOSSIER_INCOMPLET {
+  background: linear-gradient(135deg, #fef08a 0%, #fde047 100%);
+  color: #8b5a00;
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+.badge-VALIDEE {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+}
+
+.badge-STAGE_EN_COURS {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #166534;
+  animation: pulse-bright 2.5s ease-in-out infinite;
+}
+
+.badge-PAUSE {
+  background: linear-gradient(135deg, #ffe4e6 0%, #fcd34d 100%);
+  color: #9d174d;
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+.badge-RAPPORT_SOUMIS {
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  color: #4c1d95;
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+.badge-EN_CORRECTION {
+  background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+  color: #7c2d12;
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+.badge-RAPPORT_VALIDE {
+  background: linear-gradient(135deg, #cffafe 0%, #a5f3fc 100%);
+  color: #164e63;
+}
+
+.badge-NOTE_ATTRIBUEE {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+}
+
+.badge-ARCHIVE {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  color: #374151;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.02); }
+}
+
+@keyframes pulse-bright {
+  0%, 100% { opacity: 1; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2); }
+  50% { opacity: 1; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4); }
+}
+
+/* ── Chips (boutons petits/archivables) ─────────────────────– */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(100, 200, 255, 0.12);
+  border: 1px solid rgba(100, 200, 255, 0.3);
+  border-radius: var(--radius-full);
+  color: var(--color-blue-accent);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  white-space: nowrap;
+}
+
+.chip:hover {
+  background: rgba(100, 200, 255, 0.2);
+  border-color: rgba(100, 200, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(100, 200, 255, 0.2);
+}
+
+.chip-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.chip-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  margin-left: 0.25rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.chip-close:hover {
+  opacity: 1;
+}
+
+/* ── Boutons fichiers (file chips) ─────────────────────────– */
+
+.file-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: linear-gradient(135deg, rgba(100, 200, 255, 0.1), rgba(0, 212, 255, 0.05));
+  border: 1px solid rgba(100, 200, 255, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--color-blue-accent);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-chip:hover {
+  background: linear-gradient(135deg, rgba(100, 200, 255, 0.2), rgba(0, 212, 255, 0.1));
+  border-color: rgba(100, 200, 255, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(100, 200, 255, 0.25);
+  color: var(--color-blue-electric);
+}
+
+.file-chip-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.file-chip-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Cards améliorées ───────────────────────────────────────– */
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  transition: var(--transition-normal);
+  animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--color-primary) 50%, transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-accent);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.card-body {
+  line-height: 1.7;
+}
+
+.card-footer {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ── Stat cards améliorées ────────────────────────────────– */
+
+.stat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-normal);
+  animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  transition: height 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-accent);
+}
+
+.stat-card:hover::before {
+  height: 6px;
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+  animation: float 3s ease-in-out infinite;
+  display: block;
+  line-height: 1;
+}
+
+.stat-number {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Notice & Alert boxes ───────────────────────────────────– */
+
+.notice-box {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border-left: 4px solid;
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: var(--transition-normal);
+  margin-bottom: 1rem;
+}
+
+.notice-box p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.notice-success {
+  border-left-color: var(--color-success);
+  background: rgba(16, 185, 129, 0.1);
+  color: #d1fae5;
+}
+
+.notice-info {
+  border-left-color: var(--color-info);
+  background: rgba(138, 164, 198, 0.1);
+  color: #e0f2fe;
+}
+
+.notice-warning {
+  border-left-color: var(--color-warning);
+  background: rgba(245, 158, 11, 0.1);
+  color: #fef3c7;
+}
+
+.notice-error {
+  border-left-color: var(--color-danger);
+  background: rgba(239, 68, 68, 0.1);
+  color: #fecaca;
+}
+
+/* ── Utilités ───────────────────────────────────────────────– */
+
+.gap-1 { gap: 0.5rem; }
+.gap-2 { gap: 1rem; }
+.gap-3 { gap: 1.5rem; }
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
