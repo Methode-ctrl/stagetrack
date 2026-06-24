@@ -11,6 +11,7 @@ import jakarta.persistence.*;
 public class Entreprise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "nom", nullable = false)
@@ -37,7 +38,7 @@ public class Entreprise {
     /**
      * Liste des offres de stage proposées par cette entreprise.
      */
-    @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "entreprise")
     private List<OffreStage> offres;
 
     // Constructeurs

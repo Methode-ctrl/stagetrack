@@ -1,0 +1,63 @@
+@startuml
+title Diagramme de séquence - Validation d'une offre (Workflow Superviseur)
+
+actor "Superviseur" as SUP
+participant "OffreStageServlet" as S
+participant "OffreStageBean" as B
+participant "EntityManager" as EM
+database "Base de données" as DB
+
+SUP -> S: POST /offres?action=valider&id=123
+activate S
+S -> S: Récupère l'ID de l'offre
+S -> S: Récupère le statut actuel
+
+alt Offre en validation (EN_VALIDATION)
+    S -> B: validerOffre(offreId)
+    activate B
+    B -> EM: find(OffreStage.class, offreId)
+    activate EM
+    EM -> DB: SELECT * FROM OffreStage WHERE id = ?
+    DB --> EM: OffreStage
+    EM --> B: OffreStage trouvée
+    deactivate EM
+    
+    B -> B: Vérifie le statut == EN_VALIDATION
+    B -> B: offre.setStatut(VALIDEE)
+    B -> B: offre.setDateValidation(LocalDate.now())
+    B -> EM: merge(offreStage)
+    activate EM
+    EM -> DB: UPDATE OffreStage SET statut = 'VALIDEE'...
+    EM --> B: Offre mise à jour
+    deactivate EM
+    
+    B --> S: Succès
+    deactivate B
+    S -> S: messageSucces = "Offre validée avec succès"
+    
+else Dossier incomplet
+    S -> B: demanderCorrection(offreId, motif)
+    activate B
+    B -> EM: find(OffreStage.class, offreId)
+    activate EM
+    EM -> DB: SELECT * FROM OffreStage WHERE id = ?
+    DB --> EM: OffreStage
+    EM --> B: OffreStage trouvée
+    deactivate EM
+    
+    B -> B: offre.setStatut(DOSSIER_INCOMPLET)
+    B -> EM: merge(offreStage)
+    activate EM
+    EM -> DB: UPDATE OffreStage SET statut = 'DOSSIER_INCOMPLET'...
+    EM --> B: Offre mise à jour
+    deactivate EM
+    
+    B --> S: Succès avec motif
+    deactivate B
+    S -> S: messageSucces = "Correction demandée: " + motif
+end
+
+S -> E: Redirection vers /offres?action=detail&id=123
+deactivate S
+
+@enduml

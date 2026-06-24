@@ -12,6 +12,7 @@ import jakarta.persistence.*;
 public class Superviseur {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "grade", nullable = false)
@@ -34,7 +35,7 @@ public class Superviseur {
     /**
      * Ensemble des offres de stage encadrées par ce superviseur.
      */
-    @OneToMany(mappedBy = "superviseur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "superviseur")
     private List<OffreStage> offres;
 
     // Constructeurs

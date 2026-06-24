@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0"
+             xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+             https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+
+    <persistence-unit name="stagetrack-pu" transaction-type="JTA">
+
+        <jta-data-source>jdbc/stagetrackDS</jta-data-source>
+
+        <class>bi.upg.stagetrack.entity.Utilisateur</class>
+        <class>bi.upg.stagetrack.entity.Etudiant</class>
+        <class>bi.upg.stagetrack.entity.Superviseur</class>
+        <class>bi.upg.stagetrack.entity.Entreprise</class>
+        <class>bi.upg.stagetrack.entity.OffreStage</class>
+        <class>bi.upg.stagetrack.entity.PieceJointe</class>
+        <class>bi.upg.stagetrack.entity.Convention</class>
+        <class>bi.upg.stagetrack.entity.RapportStage</class>
+        <class>bi.upg.stagetrack.entity.Note</class>
+
+        <properties>
+            <property name="eclipselink.ddl-generation"
+                      value="none"/>
+            <property name="eclipselink.logging.level"
+                      value="INFO"/>
+        </properties>
+
+    </persistence-unit>
+
+</persistence>

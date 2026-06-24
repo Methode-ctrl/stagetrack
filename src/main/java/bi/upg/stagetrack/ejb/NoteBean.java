@@ -17,7 +17,7 @@ import java.util.Optional;
 @Stateless
 public class NoteBean {
 
-    @PersistenceContext
+    @PersistenceContext(unitName = "stagetrack-pu")
     private EntityManager entityManager;
 
     /**
@@ -64,12 +64,21 @@ public class NoteBean {
             double noteFinale = calculerNoteFinale(note.getNoteStage(), note.getNoteRapport(), note.getNotePresentation());
             String mention = calculerMention(noteFinale);
 
-            note.setNoteFinale(noteFinale);
-            note.setMention(mention);
-            note.setRapportStage(rapport);
-            note.setDateAttribution(LocalDate.now());
+            Note noteCible = rapport.getNote();
+            if (noteCible == null) {
+                noteCible = note;
+                noteCible.setRapportStage(rapport);
+                entityManager.persist(noteCible);
+                rapport.setNote(noteCible);
+            }
 
-            entityManager.persist(note);
+            noteCible.setNoteStage(note.getNoteStage());
+            noteCible.setNoteRapport(note.getNoteRapport());
+            noteCible.setNotePresentation(note.getNotePresentation());
+            noteCible.setAppreciation(note.getAppreciation());
+            noteCible.setNoteFinale(noteFinale);
+            noteCible.setMention(mention);
+            noteCible.setDateAttribution(LocalDate.now());
 
             // Mise à jour du statut de l'offre
             bi.upg.stagetrack.entity.OffreStage offre = rapport.getOffreStage();

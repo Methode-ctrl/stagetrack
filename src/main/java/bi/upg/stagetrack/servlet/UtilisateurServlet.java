@@ -1,9 +1,10 @@
 package bi.upg.stagetrack.servlet;
 
-import bi.upg.stagetrack.entity.Etudiant;
+import bi.upg.stagetrack.ejb.OffreStageBean;
 import bi.upg.stagetrack.entity.Utilisateur;
 import bi.upg.stagetrack.enums.Role;
 import jakarta.annotation.Resource;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.ServletException;
@@ -18,6 +19,9 @@ import java.util.List;
 
 @WebServlet("/utilisateurs")
 public class UtilisateurServlet extends HttpServlet {
+
+    @Inject
+    private OffreStageBean offreStageBean;
 
     @PersistenceContext(unitName = "stagetrack-pu")
     private EntityManager entityManager;
@@ -147,21 +151,6 @@ public class UtilisateurServlet extends HttpServlet {
             return;
         }
 
-        Etudiant etudiant = new Etudiant();
-        etudiant.setUtilisateur(utilisateur);
-        etudiant.setMatricule(String.format("AUTO-ETU-%05d", utilisateur.getId()));
-        etudiant.setFiliere("Genie Logiciel");
-        etudiant.setPromotion("BAC3-GL");
-        etudiant.setAnneeUniv(calculerAnneeUniversitaireParDefaut());
-        entityManager.persist(etudiant);
-    }
-
-    private String calculerAnneeUniversitaireParDefaut() {
-        int annee = LocalDate.now().getYear();
-        int mois = LocalDate.now().getMonthValue();
-        if (mois >= 9) {
-            return annee + "-" + (annee + 1);
-        }
-        return (annee - 1) + "-" + annee;
+        offreStageBean.findEtudiantByUtilisateurId(utilisateur.getId());
     }
 }

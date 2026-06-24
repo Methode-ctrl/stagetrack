@@ -60,6 +60,14 @@ public class OffreStageBean {
             }
         }
 
+        OffreStage dossierIncomplet = trouverDossierIncomplet(offre.getEtudiant().getId());
+        if (dossierIncomplet != null) {
+            copierCorrectionEtudiant(offre, dossierIncomplet);
+            dossierIncomplet.setCommentaireSuperviseur(null);
+            dossierIncomplet.setStatut(StatutOffre.EN_VALIDATION);
+            return;
+        }
+
         offre.setStatut(StatutOffre.OFFRE_SOUMISE);
         offre.setDateSoumission(LocalDate.now());
         em.persist(offre);
@@ -192,19 +200,15 @@ public class OffreStageBean {
     public void validerRapport(Long offreId, Long superviseurId) {
         OffreStage offre = chargerOffrePourSuperviseur(offreId, superviseurId);
 
-        boolean statutOffreValide = offre.getStatut() == StatutOffre.RAPPORT_SOUMIS
-                || offre.getStatut() == StatutOffre.EN_CORRECTION;
-        if (!statutOffreValide) {
+        if (offre.getStatut() != StatutOffre.RAPPORT_SOUMIS) {
             throw new IllegalStateException(
-                    "Seuls les rapports soumis ou en correction peuvent etre valides");
+                    "Seuls les rapports soumis peuvent etre valides");
         }
 
         RapportStage rapport = chargerRapport(offre);
-        boolean statutRapportValide = rapport.getStatut() == StatutRapport.SOUMIS
-                || rapport.getStatut() == StatutRapport.EN_CORRECTION;
-        if (!statutRapportValide) {
+        if (rapport.getStatut() != StatutRapport.SOUMIS) {
             throw new IllegalStateException(
-                    "Le rapport associe doit etre au statut SOUMIS ou EN_CORRECTION");
+                    "Le rapport associe doit etre au statut SOUMIS");
         }
 
         rapport.setStatut(StatutRapport.VALIDE);
@@ -389,6 +393,9 @@ public class OffreStageBean {
         }
 
         offre.setSuperviseur(superviseur);
+        if (offre.getStatut() == StatutOffre.OFFRE_SOUMISE) {
+            offre.setStatut(StatutOffre.EN_VALIDATION);
+        }
     }
 
     /**
@@ -506,6 +513,52 @@ public class OffreStageBean {
             throw new IllegalStateException("Aucun rapport de stage n'est associe a cette offre");
         }
         return offre.getRapport();
+    }
+
+    private OffreStage trouverDossierIncomplet(Long etudiantId) {
+        if (etudiantId == null) {
+            return null;
+        }
+
+        List<OffreStage> offres = em.createQuery(
+                "SELECT o FROM OffreStage o WHERE o.etudiant.id = :eid " +
+                "AND o.statut = :statut ORDER BY o.dateSoumission DESC",
+                OffreStage.class)
+                .setParameter("eid", etudiantId)
+                .setParameter("statut", StatutOffre.DOSSIER_INCOMPLET)
+                .setMaxResults(1)
+                .getResultList();
+
+        return offres.isEmpty() ? null : offres.get(0);
+    }
+
+    private void copierCorrectionEtudiant(OffreStage source, OffreStage cible) {
+        cible.setEntreprise(source.getEntreprise());
+        cible.setIntitulePoste(source.getIntitulePoste());
+        cible.setDescription(source.getDescription());
+        cible.setTachesPrevues(source.getTachesPrevues());
+        cible.setDateDebut(source.getDateDebut());
+        cible.setDureeEnMois(source.getDureeEnMois());
+        cible.setDateSoumission(LocalDate.now());
+
+        if (cible.getPiecesJointes() != null) {
+            cible.getPiecesJointes().clear();
+            if (source.getPiecesJointes() != null) {
+                for (var piece : source.getPiecesJointes()) {
+                    piece.setOffreStage(cible);
+                    cible.getPiecesJointes().add(piece);
+                    em.persist(piece);
+                }
+            }
+        } else {
+            cible.setPiecesJointes(source.getPiecesJointes());
+            if (cible.getPiecesJointes() != null) {
+                for (var piece : cible.getPiecesJointes()) {
+                    piece.setOffreStage(cible);
+                    em.persist(piece);
+                }
+            }
+        }
     }
 
     private void verifierStatut(OffreStage offre, StatutOffre statutAttendu, String messageErreur) {

@@ -7,10 +7,10 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Session Bean fournissant les données statistiques pour les tableaux de bord.
@@ -43,6 +43,23 @@ public class StatistiqueBean {
         return entityManager.createQuery(jpql, Long.class)
                 .setParameter("statut", statut)
                 .getSingleResult();
+    }
+
+    /**
+     * Retourne les dossiers qui attendent une affectation de superviseur.
+     */
+    public List<OffreStage> getSansSuperviseur() {
+        List<StatutOffre> statuts = new ArrayList<>();
+        statuts.add(StatutOffre.OFFRE_SOUMISE);
+        statuts.add(StatutOffre.EN_VALIDATION);
+
+        return entityManager.createQuery(
+                "SELECT o FROM OffreStage o " +
+                "WHERE o.superviseur IS NULL AND o.statut IN :statuts " +
+                "ORDER BY o.dateSoumission DESC",
+                OffreStage.class)
+                .setParameter("statuts", statuts)
+                .getResultList();
     }
 
     /**

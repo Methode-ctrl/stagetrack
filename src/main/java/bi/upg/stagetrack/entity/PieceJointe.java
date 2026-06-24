@@ -12,6 +12,7 @@ import jakarta.persistence.*;
 public class PieceJointe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "nom_fichier", nullable = false)

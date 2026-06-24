@@ -1,0 +1,58 @@
+@startuml
+title Diagramme de cas d'utilisation - StageTrack
+
+left to right direction
+
+actor "Étudiant" as etudiant
+actor "Superviseur" as superviseur
+actor "Administrateur" as admin
+
+rectangle "StageTrack - Système de gestion des stages" {
+    
+    usecase "Soumettre une offre de stage" as UC1
+    usecase "Suivre le statut de l'offre" as UC2
+    usecase "Soumettre le rapport de stage" as UC3
+    usecase "Consulter les notes" as UC4
+    usecase "Générer la convention" as UC5
+    
+    usecase "Valider les offres de stage" as UC6
+    usecase "Ouvrir le dossier de stage" as UC7
+    usecase "Demander correction" as UC8
+    usecase "Évaluer les rapports" as UC9
+    usecase "Attribuer les notes" as UC10
+    usecase "Générer les statistiques" as UC11
+    
+    usecase "Gérer les utilisateurs" as UC12
+    usecase "Gérer les entreprises" as UC13
+    usecase "Archiver les dossiers" as UC14
+    usecase "Générer les rapports globaux" as UC15
+}
+
+' Relations Étudiant
+etudiant --> UC1
+etudiant --> UC2
+etudiant --> UC3
+etudiant --> UC4
+etudiant --> UC5
+
+' Relations Superviseur
+superviseur --> UC6
+superviseur --> UC7
+superviseur --> UC8
+superviseur --> UC9
+superviseur --> UC10
+superviseur --> UC11
+
+' Relations Administrateur
+admin --> UC12
+admin --> UC13
+admin --> UC14
+admin --> UC15
+admin --> UC6
+admin --> UC7
+
+note right of UC1: Processus en 3 étapes\n(Entreprise, Stage, Documents)
+note right of UC3: Processus en 2 étapes\n(Rapport + Annexes)
+note right of UC10: Note finale = 40% stage +\n40% rapport + 20% soutenance
+
+@enduml

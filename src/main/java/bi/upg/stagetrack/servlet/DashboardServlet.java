@@ -101,10 +101,8 @@ public class DashboardServlet extends HttpServlet {
                 .setParameter("statuts", statutsAArchiver)
                 .getSingleResult();
 
-        long nbSansSuperviseur = em.createQuery(
-                "SELECT COUNT(o) FROM OffreStage o WHERE o.superviseur IS NULL",
-                Long.class)
-                .getSingleResult();
+        List<OffreStage> sansSuperviseur = statistiqueBean.getSansSuperviseur();
+        long nbSansSuperviseur = sansSuperviseur.size();
 
         request.setAttribute("nbTotal", nbTotal);
         request.setAttribute("nbSoumises", nbSoumises);
@@ -113,6 +111,7 @@ public class DashboardServlet extends HttpServlet {
         request.setAttribute("nbRapportsAEvaluer", nbRapportsAEvaluer);
         request.setAttribute("nbAArchiver", nbAArchiver);
         request.setAttribute("nbSansSuperviseur", nbSansSuperviseur);
+        request.setAttribute("sansSuperviseur", sansSuperviseur);
         request.setAttribute("offres", offreStageBean.listerToutes());
 
         List<Superviseur> superviseurs = em.createQuery(

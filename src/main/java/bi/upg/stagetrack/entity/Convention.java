@@ -11,6 +11,7 @@ import jakarta.persistence.*;
 public class Convention {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "numero_convention", unique = true, nullable = false)
