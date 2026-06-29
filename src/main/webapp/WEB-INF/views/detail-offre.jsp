@@ -90,8 +90,8 @@
     }
   </style>
 </head>
-<body class="page-dashboard">
-  <%@ include file="include/navbar.jsp" %>
+<body class="page-dashboard" data-logout-url="${pageContext.request.contextPath}/login?action=logout">
+  <%@ include file="include/sidebar.jsp" %>
 
   <c:set var="badgeClass" value="badge-dark"/>
   <c:set var="statutLibelle" value="Archive"/>
@@ -649,7 +649,7 @@
   </main>
 
   <%@ include file="include/footer.jsp" %>
-  <script src="${pageContext.request.contextPath}/js/navbar.js"></script>
+  <script src="${pageContext.request.contextPath}/js/sidebar.js"></script>
   <script src="${pageContext.request.contextPath}/js/animations.js"></script>
   <script src="${pageContext.request.contextPath}/js/utils.js"></script>
 </body>

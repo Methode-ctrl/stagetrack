@@ -7,8 +7,8 @@
   <c:set var="pageTitle" value="Affecter un superviseur"/>
   <%@ include file="include/head.jsp" %>
 </head>
-<body class="page-dashboard">
-  <%@ include file="include/navbar.jsp" %>
+<body class="page-dashboard" data-logout-url="${pageContext.request.contextPath}/login?action=logout">
+  <%@ include file="include/sidebar.jsp" %>
   <main class="main-content">
     <div class="container">
       <div class="form-card" style="max-width:560px;">
@@ -48,7 +48,7 @@
     </div>
   </main>
   <%@ include file="include/footer.jsp" %>
-  <script src="${pageContext.request.contextPath}/js/navbar.js"></script>
+  <script src="${pageContext.request.contextPath}/js/sidebar.js"></script>
   <script src="${pageContext.request.contextPath}/js/animations.js"></script>
   <script src="${pageContext.request.contextPath}/js/utils.js"></script>
 </body>
