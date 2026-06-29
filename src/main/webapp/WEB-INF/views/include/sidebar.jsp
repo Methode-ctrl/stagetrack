@@ -102,7 +102,7 @@
         </c:choose>
       </div>
     </div>
-    <a href="${pageContext.request.contextPath}/logout" class="logout-btn" title="Déconnexion">
+    <a href="${pageContext.request.contextPath}/login?action=logout" class="logout-btn" title="Déconnexion">
       🚪
     </a>
   </div>

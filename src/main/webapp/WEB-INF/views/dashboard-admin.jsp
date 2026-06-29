@@ -6,7 +6,7 @@
   <c:set var="pageTitle" value="Tableau de bord Admin"/>
   <%@ include file="include/head.jsp" %>
 </head>
-<body class="page-dashboard" data-logout-url="${pageContext.request.contextPath}/logout">
+<body class="page-dashboard" data-logout-url="${pageContext.request.contextPath}/login?action=logout">
   <%@ include file="include/sidebar.jsp" %>
 
   <main class="main-content">

@@ -13,15 +13,15 @@
       font-size: 13px;
       border: 1px solid transparent;
     }
-    .badge-warning { background: #fff3cd; color: #856404; border-color: #ffc107; }
-    .badge-info { background: #d1ecf1; color: #0c5460; border-color: #17a2b8; }
-    .badge-danger { background: #f8d7da; color: #721c24; border-color: #dc3545; }
-    .badge-success { background: #d4edda; color: #155724; border-color: #28a745; }
-    .badge-primary { background: #cce5ff; color: #004085; border-color: #007bff; }
-    .badge-secondary { background: #e2e3e5; color: #383d41; border-color: #6c757d; }
-    .badge-orange { background: #ffe5cc; color: #7d3c00; border-color: #fd7e14; }
-    .badge-purple { background: #e8d5f5; color: #4a235a; border-color: #6f42c1; }
-    .badge-dark { background: #d6d8d9; color: #1b1e21; border-color: #343a40; }
+    .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); }
+    .badge-info { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border-color: rgba(59, 130, 246, 0.4); }
+    .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; border-color: rgba(239, 68, 68, 0.4); }
+    .badge-success { background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4); }
+    .badge-primary { background: rgba(99, 102, 241, 0.2); color: #818cf8; border-color: rgba(99, 102, 241, 0.4); }
+    .badge-secondary { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border-color: rgba(107, 114, 128, 0.4); }
+    .badge-orange { background: rgba(249, 115, 22, 0.2); color: #fb923c; border-color: rgba(249, 115, 22, 0.4); }
+    .badge-purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border-color: rgba(139, 92, 246, 0.4); }
+    .badge-dark { background: rgba(55, 65, 81, 0.3); color: #9ca3af; border-color: rgba(75, 85, 99, 0.4); }
     .quick-filters {
       display: flex;
       flex-wrap: wrap;
@@ -78,7 +78,7 @@
     }
   </style>
 </head>
-<body class="page-dashboard" data-logout-url="${pageContext.request.contextPath}/logout">
+<body class="page-dashboard" data-logout-url="${pageContext.request.contextPath}/login?action=logout">
   <%@ include file="include/sidebar.jsp" %>
 
 
