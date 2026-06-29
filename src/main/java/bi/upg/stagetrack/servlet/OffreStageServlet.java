@@ -301,6 +301,11 @@ public class OffreStageServlet extends HttpServlet {
 
         String role = (String) session.getAttribute("role");
         Utilisateur utilisateur = (Utilisateur) session.getAttribute("utilisateur");
+        String filtreStatut    = request.getParameter("statut");
+        String filtreRecherche = request.getParameter("recherche");
+        if (filtreStatut    != null && filtreStatut.trim().isEmpty())    filtreStatut    = null;
+        if (filtreRecherche != null && filtreRecherche.trim().isEmpty()) filtreRecherche = null;
+
         List<OffreStage> offres;
 
         if ("ADMIN".equals(role)) {
@@ -324,6 +329,38 @@ public class OffreStageServlet extends HttpServlet {
             }
         } else {
             offres = new ArrayList<>();
+        }
+
+        /* ---- Filtrage local par statut et recherche ---- */
+        if (filtreStatut != null) {
+            final String fs = filtreStatut;
+            offres = offres.stream()
+                    .filter(o -> o.getStatut() != null && o.getStatut().name().equals(fs))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+
+        if (filtreRecherche != null) {
+            final String fr = filtreRecherche.toLowerCase().trim();
+            offres = offres.stream().filter(o -> {
+                if (o.getEtudiant() != null && o.getEtudiant().getUtilisateur() != null) {
+                    String nom    = o.getEtudiant().getUtilisateur().getNom();
+                    String prenom = o.getEtudiant().getUtilisateur().getPrenom();
+                    String email  = o.getEtudiant().getUtilisateur().getEmail();
+                    if ((nom    != null && nom.toLowerCase().contains(fr))
+                     || (prenom != null && prenom.toLowerCase().contains(fr))
+                     || (email  != null && email.toLowerCase().contains(fr))) {
+                        return true;
+                    }
+                }
+                if (o.getEntreprise() != null) {
+                    String entNom = o.getEntreprise().getNom();
+                    if (entNom != null && entNom.toLowerCase().contains(fr)) return true;
+                }
+                if (o.getIntitulePoste() != null && o.getIntitulePoste().toLowerCase().contains(fr)) {
+                    return true;
+                }
+                return false;
+            }).collect(java.util.stream.Collectors.toList());
         }
 
         request.setAttribute("offres", offres);

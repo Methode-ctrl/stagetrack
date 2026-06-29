@@ -3,6 +3,7 @@ package bi.upg.stagetrack.servlet;
 import bi.upg.stagetrack.ejb.OffreStageBean;
 import bi.upg.stagetrack.entity.Utilisateur;
 import bi.upg.stagetrack.enums.Role;
+import bi.upg.stagetrack.util.PasswordUtil;
 import jakarta.annotation.Resource;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -119,7 +120,7 @@ public class UtilisateurServlet extends HttpServlet {
 
         String motDePasse = request.getParameter("motDePasse");
         if (motDePasse != null && !motDePasse.isEmpty()) {
-            utilisateur.setMotDePasse(motDePasse);
+            utilisateur.setMotDePasse(PasswordUtil.hash(motDePasse));
         }
 
         String roleStr = request.getParameter("role");

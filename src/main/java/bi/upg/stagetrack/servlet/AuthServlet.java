@@ -1,6 +1,7 @@
 package bi.upg.stagetrack.servlet;
 
 import bi.upg.stagetrack.entity.Utilisateur;
+import bi.upg.stagetrack.util.PasswordUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.ServletException;
@@ -66,7 +67,7 @@ public class AuthServlet extends HttpServlet {
 
         if (!results.isEmpty()) {
             Utilisateur u = results.get(0);
-            if (u.getMotDePasse().equals(motDePasse)) {
+            if (PasswordUtil.verify(motDePasse, u.getMotDePasse())) {
                 // Authentification réussie
                 HttpSession session = request.getSession(true);
                 session.setAttribute("utilisateur", u);

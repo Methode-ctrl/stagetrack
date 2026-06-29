@@ -189,14 +189,18 @@ CREATE TABLE note (
 INSERT INTO utilisateur
     (id, nom, prenom, email, mot_de_passe, role, date_creation, actif)
 VALUES
-(1, 'Niyonzima',    'Pascal',   'admin@upg.bi',                  'admin123',  'ADMIN',       '2025-09-01', TRUE),
-(2, 'Nkurunziza',   'Theodore', 'nkurunziza.t@upg.bi',           'super123',  'SUPERVISEUR', '2025-09-01', TRUE),
-(3, 'Hakizimana',   'Vestine',  'hakizimana.v@upg.bi',           'super123',  'SUPERVISEUR', '2025-09-01', TRUE),
-(4, 'Irakoze',      'Jean',     'irakoze.jean@etud.upg.bi',      'etud123',   'ETUDIANT',    '2025-09-05', TRUE),
-(5, 'Ntakirutimana','Marie',    'ntakirut.marie@etud.upg.bi',    'etud123',   'ETUDIANT',    '2025-09-05', TRUE),
-(6, 'Niyongabo',    'Pierre',   'niyongabo.p@etud.upg.bi',       'etud123',   'ETUDIANT',    '2025-09-05', TRUE),
-(7, 'Uwimana',      'Claudine', 'uwimana.c@etud.upg.bi',         'etud123',   'ETUDIANT',    '2025-09-05', TRUE),
-(8, 'Bizimana',     'Alexis',   'bizimana.a@etud.upg.bi',        'etud123',   'ETUDIANT',    '2025-09-05', TRUE);
+-- Mots de passe hachés SHA-256 :
+--   admin123  → 240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9
+--   super123  → 4e4c56e4a15f89f05c2f4c72613da2a18c9665d4f0d6acce16415eb06f9be776
+--   etud123   → 8285f134eeefb1b59dcde5eb4c322e5939f52e053480b9d3757517d3b93e20bb
+(1, 'Niyonzima',    'Pascal',   'admin@upg.bi',                  '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',  'ADMIN',       '2025-09-01', TRUE),
+(2, 'Nkurunziza',   'Theodore', 'nkurunziza.t@upg.bi',           '4e4c56e4a15f89f05c2f4c72613da2a18c9665d4f0d6acce16415eb06f9be776',  'SUPERVISEUR', '2025-09-01', TRUE),
+(3, 'Hakizimana',   'Vestine',  'hakizimana.v@upg.bi',           '4e4c56e4a15f89f05c2f4c72613da2a18c9665d4f0d6acce16415eb06f9be776',  'SUPERVISEUR', '2025-09-01', TRUE),
+(4, 'Irakoze',      'Jean',     'irakoze.jean@etud.upg.bi',      '8285f134eeefb1b59dcde5eb4c322e5939f52e053480b9d3757517d3b93e20bb',   'ETUDIANT',    '2025-09-05', TRUE),
+(5, 'Ntakirutimana','Marie',    'ntakirut.marie@etud.upg.bi',    '8285f134eeefb1b59dcde5eb4c322e5939f52e053480b9d3757517d3b93e20bb',   'ETUDIANT',    '2025-09-05', TRUE),
+(6, 'Niyongabo',    'Pierre',   'niyongabo.p@etud.upg.bi',       '8285f134eeefb1b59dcde5eb4c322e5939f52e053480b9d3757517d3b93e20bb',   'ETUDIANT',    '2025-09-05', TRUE),
+(7, 'Uwimana',      'Claudine', 'uwimana.c@etud.upg.bi',         '8285f134eeefb1b59dcde5eb4c322e5939f52e053480b9d3757517d3b93e20bb',   'ETUDIANT',    '2025-09-05', TRUE),
+(8, 'Bizimana',     'Alexis',   'bizimana.a@etud.upg.bi',        '8285f134eeefb1b59dcde5eb4c322e5939f52e053480b9d3757517d3b93e20bb',   'ETUDIANT',    '2025-09-05', TRUE);
 
 -- ------------------------------------------------------------
 -- 2. ÉTUDIANTS (5 profils détaillés)

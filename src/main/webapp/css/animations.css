@@ -1,203 +1,31 @@
-/* ============================================================
-   STAGETRACK – animations.css
-   Animations inspirées du mouvement de l'eau
-   ============================================================ */
+/* STAGETRACK – animations.css */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+@keyframes pulseGold { 0%, 100% { box-shadow: 0 0 0 0 rgba(240,192,0,0.4); } 50% { box-shadow: 0 0 0 8px rgba(240,192,0,0); } }
+@keyframes pulseRed { 0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); } 50% { box-shadow: 0 0 0 8px rgba(239,68,68,0); } }
+@keyframes pulseGreen { 0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); } 50% { box-shadow: 0 0 0 8px rgba(16,185,129,0); } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes bounceDown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
 
-/* ── @keyframes ─────────────────────────────────────────────── */
+.animate-fade-in    { animation: fadeIn 0.4s ease-out both; }
+.animate-fade-up    { animation: fadeUp 0.45s ease-out both; }
+.animate-fade-down  { animation: fadeDown 0.4s ease-out both; }
+.animate-slide-left { animation: slideInLeft 0.4s ease-out both; }
+.animate-slide-right{ animation: slideInRight 0.4s ease-out both; }
+.animate-scale-in   { animation: scaleIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
 
-@keyframes waterFlow {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
+.delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; } .delay-5 { animation-delay: 0.5s; }
 
-@keyframes wave {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-6px); }
-}
+.hover-lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.hover-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,0.45); }
+.hover-glow:hover { box-shadow: 0 0 0 2px rgba(240,192,0,0.35), 0 8px 24px rgba(0,0,0,0.4); }
 
-@keyframes ripple {
-  0%   { transform: scale(0); opacity: 0.6; }
-  100% { transform: scale(4); opacity: 0; }
-}
+.main-content { animation: fadeUp 0.35s ease-out both; }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeInLeft {
-  from { opacity: 0; transform: translateX(-24px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes fadeInRight {
-  from { opacity: 0; transform: translateX(24px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes pulse-water {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(0,180,216,0.4); }
-  50%       { box-shadow: 0 0 0 12px rgba(0,180,216,0); }
-}
-
-@keyframes shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  33%       { transform: translateY(-8px); }
-  66%       { transform: translateY(-4px); }
-}
-
-@keyframes slideDown {
-  from { transform: translateY(-100%); opacity: 0; }
-  to   { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes dropdownOpen {
-  from { opacity: 0; transform: translateY(-10px) scaleY(0.95); }
-  to   { opacity: 1; transform: translateY(0) scaleY(1); }
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes progressFill {
-  from { width: 0%; }
-  to   { width: var(--progress-width, 100%); }
-}
-
-@keyframes countUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.85); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-@keyframes slideInMobile {
-  from { opacity: 0; transform: translateX(-20px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-/* ── Classes utilitaires d'animation ───────────────────────── */
-
-.animate-fadeInUp {
-  animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-.animate-fadeInLeft {
-  animation: fadeInLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.4s ease both;
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-  will-change: transform;
-}
-
-.animate-wave {
-  animation: wave 2s ease-in-out infinite;
-  will-change: transform;
-}
-
-.animate-pulse-water {
-  animation: pulse-water 2.5s ease-in-out infinite;
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-  will-change: transform;
-}
-
-/* Délais stagger pour les listes */
-.stagger-1 { animation-delay: 0.05s; }
-.stagger-2 { animation-delay: 0.10s; }
-.stagger-3 { animation-delay: 0.15s; }
-.stagger-4 { animation-delay: 0.20s; }
-.stagger-5 { animation-delay: 0.25s; }
-.stagger-6 { animation-delay: 0.30s; }
-
-/* ── Classe ajoutée par JS au scroll ────────────────────────── */
-.scroll-reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.scroll-reveal.animate-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ── Shimmer skeleton loader ────────────────────────────────── */
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--color-border) 25%,
-    var(--color-surface-alt) 50%,
-    var(--color-border) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: var(--radius-md);
-}
-
-/* ── Ripple effect ──────────────────────────────────────────── */
-.ripple-effect {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.35);
-  pointer-events: none;
-  animation: ripple 0.6s linear;
-  will-change: transform, opacity;
-}
-
-/* ── Loading spinner ────────────────────────────────────────── */
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--color-border);
-  border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  will-change: transform;
-}
-
-.loading-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(3, 4, 94, 0.4);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  animation: fadeIn 0.2s ease;
-}
-
-/* ── Water gradient background ──────────────────────────────── */
-.bg-water {
-  background: linear-gradient(270deg, #03045E, #0077B6, #00B4D8, #48CAE4);
-  background-size: 400% 400%;
-  animation: waterFlow 8s ease infinite;
-}
-
-.bg-gradient {
-  background: linear-gradient(135deg, #03045E 0%, #0077B6 50%, #00B4D8 100%);
-}
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
