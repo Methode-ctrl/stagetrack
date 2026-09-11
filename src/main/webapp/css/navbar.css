@@ -1,0 +1,229 @@
+/* ============================================================
+   STAGETRACK — NAVBAR.CSS
+   Sidebar gauche + menu
+   ============================================================ */
+
+.navbar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  padding: 20px 16px;
+}
+
+/* ---------- Logo ---------- */
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 6px 20px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 24px;
+}
+
+.sidebar-logo-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: inset 0 0 0 1px var(--border-color);
+}
+
+.sidebar-logo-text {
+  line-height: 1.2;
+}
+
+.sidebar-logo-text strong {
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: block;
+}
+
+.sidebar-logo-text span {
+  color: var(--purple-400);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ---------- Menu ---------- */
+.nav-menu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+.nav-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 12px 14px 6px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+
+.nav-link .nav-icon {
+  font-size: 18px;
+  width: 22px;
+  text-align: center;
+}
+
+.nav-link .nav-text {
+  flex: 1;
+}
+
+.nav-link:hover {
+  background: rgba(124, 58, 237, 0.1);
+  color: var(--purple-400);
+}
+
+.nav-link.active {
+  background: var(--purple-600);
+  color: var(--text-primary);
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.nav-link.active:hover {
+  color: var(--text-primary);
+}
+
+.nav-badge {
+  background: var(--purple-600);
+  color: var(--text-primary);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  min-width: 22px;
+  text-align: center;
+}
+
+.nav-link.active .nav-badge {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.nav-link:not(.active):hover .nav-badge {
+  background: rgba(124, 58, 237, 0.25);
+  color: var(--purple-400);
+}
+
+/* ---------- Card "Upgrade" / projet en bas ---------- */
+.card-upgrade {
+  margin-top: 16px;
+  background: linear-gradient(135deg, var(--purple-600), #4C1D95);
+  border-radius: 16px;
+  padding: 18px 16px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.35);
+  animation: fadeInUp 0.6s 0.2s ease both;
+}
+
+.card-upgrade h4 {
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.card-upgrade p {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+
+.card-upgrade .btn {
+  display: inline-block;
+  background: var(--text-primary);
+  color: var(--purple-600);
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-upgrade .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- Utilisateur en bas ---------- */
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 8px 4px;
+  border-top: 1px solid var(--border-color);
+  margin-top: 16px;
+}
+
+.navbar-user .user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple-500), var(--purple-600));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.navbar-user .user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.navbar-user .user-role {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ---------- Lien déconnexion ---------- */
+.nav-logout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: #F87171;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+  margin-top: 4px;
+}
+
+.nav-logout:hover {
+  background: rgba(248, 113, 113, 0.1);
+  color: #FCA5A5;
+}
