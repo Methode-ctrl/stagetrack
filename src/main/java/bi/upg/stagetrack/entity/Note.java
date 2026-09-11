@@ -1,59 +1,71 @@
 package bi.upg.stagetrack.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
-/**
- * Entité représentant la note finale attribuée à un étudiant pour son stage.
- */
 @Entity
 @Table(name = "note")
-public class Note {
+public class Note implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "note_stage", nullable = false)
-    private double noteStage; // /20, coefficient 40%
+    @OneToOne
+    @JoinColumn(name = "rapport_stage_id", nullable = false, unique = true)
+    private RapportStage rapportStage;
 
-    @Column(name = "note_rapport", nullable = false)
-    private double noteRapport; // /20, coefficient 40%
+    @Column(name = "note_stage")
+    private Double noteStage;
 
-    @Column(name = "note_presentation", nullable = false)
-    private double notePresentation; // /20, coefficient 20%
+    @Column(name = "note_rapport")
+    private Double noteRapport;
 
-    @Column(name = "note_finale", nullable = false)
-    private double noteFinale; // calculée par EJB NoteBean
+    @Column(name = "note_presence")
+    private Double notePresence;
 
-    @Column(name = "mention", nullable = false)
-    private String mention; // calculée par EJB NoteBean
+    @Column(name = "note_finale")
+    private Double noteFinale;
+
+    @Column(name = "mention", length = 50)
+    private String mention;
 
     @Column(name = "appreciation", columnDefinition = "TEXT")
     private String appreciation;
 
-    @Column(name = "date_attribution", nullable = false)
-    private LocalDate dateAttribution;
+    @Column(name = "date_attribution")
+    private LocalDateTime dateAttribution;
 
-    @OneToOne
-    @JoinColumn(name = "rapport_stage_id", nullable = false)
-    private RapportStage rapportStage;
+    public Note() {}
 
-    // Getters and setters
+    public Note(RapportStage rapportStage, Double noteStage, Double noteRapport, Double notePresence) {
+        this.rapportStage = rapportStage;
+        this.noteStage = noteStage;
+        this.noteRapport = noteRapport;
+        this.notePresence = notePresence;
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public double getNoteStage() { return noteStage; }
-    public void setNoteStage(double noteStage) { this.noteStage = noteStage; }
+    public RapportStage getRapportStage() { return rapportStage; }
+    public void setRapportStage(RapportStage rapportStage) { this.rapportStage = rapportStage; }
 
-    public double getNoteRapport() { return noteRapport; }
-    public void setNoteRapport(double noteRapport) { this.noteRapport = noteRapport; }
+    public Double getNoteStage() { return noteStage; }
+    public void setNoteStage(Double noteStage) { this.noteStage = noteStage; }
 
-    public double getNotePresentation() { return notePresentation; }
-    public void setNotePresentation(double notePresentation) { this.notePresentation = notePresentation; }
+    public Double getNoteRapport() { return noteRapport; }
+    public void setNoteRapport(Double noteRapport) { this.noteRapport = noteRapport; }
 
-    public double getNoteFinale() { return noteFinale; }
-    public void setNoteFinale(double noteFinale) { this.noteFinale = noteFinale; }
+    public Double getNotePresence() { return notePresence; }
+    public void setNotePresence(Double notePresence) { this.notePresence = notePresence; }
+
+    public Double getNoteFinale() { return noteFinale; }
+    public void setNoteFinale(Double noteFinale) { this.noteFinale = noteFinale; }
 
     public String getMention() { return mention; }
     public void setMention(String mention) { this.mention = mention; }
@@ -61,9 +73,6 @@ public class Note {
     public String getAppreciation() { return appreciation; }
     public void setAppreciation(String appreciation) { this.appreciation = appreciation; }
 
-    public LocalDate getDateAttribution() { return dateAttribution; }
-    public void setDateAttribution(LocalDate dateAttribution) { this.dateAttribution = dateAttribution; }
-
-    public RapportStage getRapportStage() { return rapportStage; }
-    public void setRapportStage(RapportStage rapportStage) { this.rapportStage = rapportStage; }
+    public LocalDateTime getDateAttribution() { return dateAttribution; }
+    public void setDateAttribution(LocalDateTime dateAttribution) { this.dateAttribution = dateAttribution; }
 }

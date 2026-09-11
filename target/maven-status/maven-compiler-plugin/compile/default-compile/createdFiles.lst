@@ -4,11 +4,11 @@ bi\upg\stagetrack\ejb\StatistiqueBean.class
 bi\upg\stagetrack\entity\Note.class
 bi\upg\stagetrack\entity\Entreprise.class
 bi\upg\stagetrack\enums\StatutOffre.class
-bi\upg\stagetrack\servlet\AuthServlet$1.class
 bi\upg\stagetrack\servlet\OffreStageServlet.class
 bi\upg\stagetrack\filter\AuthFilter.class
 bi\upg\stagetrack\servlet\EntrepriseServlet.class
 bi\upg\stagetrack\entity\Etudiant.class
+bi\upg\stagetrack\servlet\DashboardServlet$1.class
 bi\upg\stagetrack\servlet\ConventionServlet.class
 bi\upg\stagetrack\servlet\DashboardServlet.class
 bi\upg\stagetrack\entity\Utilisateur.class

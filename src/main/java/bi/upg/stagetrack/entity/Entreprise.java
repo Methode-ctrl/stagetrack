@@ -1,95 +1,66 @@
 package bi.upg.stagetrack.entity;
 
-import java.util.List;
 import jakarta.persistence.*;
+import java.io.Serializable;
 
-/**
- * Entité représentant une entreprise partenaire pouvant accueillir des stagiaires.
- */
 @Entity
 @Table(name = "entreprise")
-public class Entreprise {
+public class Entreprise implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "nom", nullable = false)
+    @Column(name = "nom", nullable = false, length = 200)
     private String nom;
 
-    @Column(name = "secteur")
-    private String secteur;
-
-    @Column(name = "adresse")
+    @Column(name = "adresse", length = 255)
     private String adresse;
 
-    @Column(name = "ville", nullable = false)
-    private String ville;
-
-    @Column(name = "nom_responsable")
-    private String nomResponsable;
-
-    @Column(name = "email_contact")
-    private String emailContact;
-
-    @Column(name = "telephone")
+    @Column(name = "telephone", length = 30)
     private String telephone;
 
-    /**
-     * Liste des offres de stage proposées par cette entreprise.
-     */
-    @OneToMany(mappedBy = "entreprise")
-    private List<OffreStage> offres;
+    @Column(name = "email", length = 150)
+    private String email;
 
-    // Constructeurs
-    public Entreprise() {
-    }
+    @Column(name = "secteur", length = 150)
+    private String secteur;
 
-    public Entreprise(String nom, String secteur, String adresse, String ville, String nomResponsable, String emailContact, String telephone) {
+    @Column(name = "representant", length = 150)
+    private String representant;
+
+    public Entreprise() {}
+
+    public Entreprise(String nom, String adresse, String telephone, String email, String secteur, String representant) {
         this.nom = nom;
-        this.secteur = secteur;
         this.adresse = adresse;
-        this.ville = ville;
-        this.nomResponsable = nomResponsable;
-        this.emailContact = emailContact;
         this.telephone = telephone;
+        this.email = email;
+        this.secteur = secteur;
+        this.representant = representant;
     }
 
-    // Getters et setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
     public String getNom() { return nom; }
     public void setNom(String nom) { this.nom = nom; }
 
-    public String getSecteur() { return secteur; }
-    public void setSecteur(String secteur) { this.secteur = secteur; }
-
     public String getAdresse() { return adresse; }
     public void setAdresse(String adresse) { this.adresse = adresse; }
-
-    public String getVille() { return ville; }
-    public void setVille(String ville) { this.ville = ville; }
-
-    public String getNomResponsable() { return nomResponsable; }
-    public void setNomResponsable(String nomResponsable) { this.nomResponsable = nomResponsable; }
-
-    public String getEmailContact() { return emailContact; }
-    public void setEmailContact(String emailContact) { this.emailContact = emailContact; }
 
     public String getTelephone() { return telephone; }
     public void setTelephone(String telephone) { this.telephone = telephone; }
 
-    public List<OffreStage> getOffres() { return offres; }
-    public void setOffres(List<OffreStage> offres) { this.offres = offres; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void ajouterOffre(OffreStage offre) {
-        this.offres.add(offre);
-        offre.setEntreprise(this);
-    }
+    public String getSecteur() { return secteur; }
+    public void setSecteur(String secteur) { this.secteur = secteur; }
 
-    public void retirerOffre(OffreStage offre) {
-        this.offres.remove(offre);
-        offre.setEntreprise(null);
-    }
+    public String getRepresentant() { return representant; }
+    public void setRepresentant(String representant) { this.representant = representant; }
 }

@@ -1,46 +1,51 @@
 package bi.upg.stagetrack.entity;
 
-import jakarta.persistence.*;
-import java.time.LocalDate;
 import bi.upg.stagetrack.enums.StatutRapport;
+import jakarta.persistence.*;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "rapport_stage")
-public class RapportStage {
+public class RapportStage implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "titre")
+    @Column(name = "titre", nullable = false, length = 200)
     private String titre;
 
-    @Column(name = "resume", columnDefinition = "TEXT")
-    private String resume;
-
-    @Column(name = "competences_acquises", columnDefinition = "TEXT")
-    private String competencesAcquises;
-
-    @Column(name = "nom_fichier_pdf")
-    private String nomFichierPdf;
-
-    @Column(name = "nom_fichier_annexe")
-    private String nomFichierAnnexe;
+    @Column(name = "chemin_fichier", length = 500)
+    private String cheminFichier;
 
     @Column(name = "date_soumission")
-    private LocalDate dateSoumission;
+    private LocalDateTime dateSoumission;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "statut", nullable = false)
+    @Enumerated(EnumType.STRING)
     private StatutRapport statut;
 
-    @OneToOne
+    @Column(name = "commentaire", columnDefinition = "TEXT")
+    private String commentaire;
+
+    @ManyToOne
     @JoinColumn(name = "offre_stage_id", nullable = false)
     private OffreStage offreStage;
 
-    @OneToOne(mappedBy = "rapportStage", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "rapportStage")
     private Note note;
+
+    public RapportStage() {}
+
+    public RapportStage(String titre, OffreStage offreStage) {
+        this.titre = titre;
+        this.offreStage = offreStage;
+        this.statut = StatutRapport.SOUMIS;
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -48,23 +53,17 @@ public class RapportStage {
     public String getTitre() { return titre; }
     public void setTitre(String titre) { this.titre = titre; }
 
-    public String getResume() { return resume; }
-    public void setResume(String resume) { this.resume = resume; }
+    public String getCheminFichier() { return cheminFichier; }
+    public void setCheminFichier(String cheminFichier) { this.cheminFichier = cheminFichier; }
 
-    public String getCompetencesAcquises() { return competencesAcquises; }
-    public void setCompetencesAcquises(String competencesAcquises) { this.competencesAcquises = competencesAcquises; }
-
-    public String getNomFichierPdf() { return nomFichierPdf; }
-    public void setNomFichierPdf(String nomFichierPdf) { this.nomFichierPdf = nomFichierPdf; }
-
-    public String getNomFichierAnnexe() { return nomFichierAnnexe; }
-    public void setNomFichierAnnexe(String nomFichierAnnexe) { this.nomFichierAnnexe = nomFichierAnnexe; }
-
-    public LocalDate getDateSoumission() { return dateSoumission; }
-    public void setDateSoumission(LocalDate dateSoumission) { this.dateSoumission = dateSoumission; }
+    public LocalDateTime getDateSoumission() { return dateSoumission; }
+    public void setDateSoumission(LocalDateTime dateSoumission) { this.dateSoumission = dateSoumission; }
 
     public StatutRapport getStatut() { return statut; }
     public void setStatut(StatutRapport statut) { this.statut = statut; }
+
+    public String getCommentaire() { return commentaire; }
+    public void setCommentaire(String commentaire) { this.commentaire = commentaire; }
 
     public OffreStage getOffreStage() { return offreStage; }
     public void setOffreStage(OffreStage offreStage) { this.offreStage = offreStage; }

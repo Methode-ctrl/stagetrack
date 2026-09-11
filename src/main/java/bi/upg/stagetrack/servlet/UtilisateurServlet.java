@@ -1,10 +1,9 @@
 package bi.upg.stagetrack.servlet;
 
-import bi.upg.stagetrack.ejb.OffreStageBean;
+import bi.upg.stagetrack.entity.Etudiant;
+import bi.upg.stagetrack.entity.Superviseur;
 import bi.upg.stagetrack.entity.Utilisateur;
 import bi.upg.stagetrack.enums.Role;
-import jakarta.annotation.Resource;
-import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.ServletException;
@@ -12,145 +11,85 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.UserTransaction;
+
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @WebServlet("/utilisateurs")
 public class UtilisateurServlet extends HttpServlet {
 
-    @Inject
-    private OffreStageBean offreStageBean;
-
     @PersistenceContext(unitName = "stagetrack-pu")
-    private EntityManager entityManager;
-
-    @Resource
-    private UserTransaction userTransaction;
+    private EntityManager em;
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         try {
-            String action = request.getParameter("action");
-            if ("new".equals(action)) {
-                request.getRequestDispatcher("/WEB-INF/views/gestion-utilisateurs.jsp").forward(request, response);
-                return;
-            }
-
-            if ("edit".equals(action)) {
-                Long id = Long.parseLong(request.getParameter("id"));
-                Utilisateur utilisateur = entityManager.find(Utilisateur.class, id);
-                request.setAttribute("utilisateur", utilisateur);
-                request.getRequestDispatcher("/WEB-INF/views/gestion-utilisateurs.jsp").forward(request, response);
-                return;
-            }
-
-            List<Utilisateur> utilisateurs = entityManager.createQuery(
-                    "SELECT u FROM Utilisateur u ORDER BY u.nom, u.prenom",
-                    Utilisateur.class)
-                .getResultList();
-            request.setAttribute("utilisateurs", utilisateurs);
-            request.getRequestDispatcher("/WEB-INF/views/gestion-utilisateurs.jsp").forward(request, response);
+            List<Utilisateur> utilisateurs = em.createQuery(
+                    "SELECT u FROM Utilisateur u ORDER BY u.role, u.nom", Utilisateur.class)
+                    .getResultList();
+            req.setAttribute("utilisateurs", utilisateurs);
+            req.getRequestDispatcher("/WEB-INF/views/gestion-utilisateurs.jsp").forward(req, resp);
         } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("erreur", "Erreur lors du chargement: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/erreur.jsp").forward(request, response);
+            req.setAttribute("erreur", e.getMessage());
+            req.getRequestDispatcher("/WEB-INF/views/erreur.jsp").forward(req, resp);
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         try {
-            userTransaction.begin();
+            String action = req.getParameter("action");
 
-            String action = request.getParameter("action");
-            if ("save".equals(action)) {
-                enregistrerUtilisateur(request);
-            } else if ("delete".equals(action)) {
-                Long id = Long.parseLong(request.getParameter("id"));
-                Utilisateur utilisateur = entityManager.find(Utilisateur.class, id);
-                if (utilisateur != null) {
-                    utilisateur.setActif(false);
-                    entityManager.merge(utilisateur);
+            switch (action) {
+                case "creer": {
+                    Utilisateur utilisateur = new Utilisateur(
+                            req.getParameter("nom"),
+                            req.getParameter("prenom"),
+                            req.getParameter("email"),
+                            req.getParameter("motDePasse"),
+                            Role.valueOf(req.getParameter("role")));
+                    utilisateur.setDateCreation(LocalDateTime.now());
+                    em.persist(utilisateur);
+                    em.flush();
+
+                    String matricule = req.getParameter("matricule");
+                    String filiere = req.getParameter("filiere");
+                    String promotion = req.getParameter("promotion");
+                    if (Role.ETUDIANT.equals(utilisateur.getRole())) {
+                        Etudiant etudiant = new Etudiant(utilisateur, matricule, filiere, promotion);
+                        em.persist(etudiant);
+                    } else if (Role.SUPERVISEUR.equals(utilisateur.getRole())) {
+                        Superviseur superviseur = new Superviseur(
+                                utilisateur, req.getParameter("grade"), req.getParameter("specialite"));
+                        em.persist(superviseur);
+                    }
+                    break;
                 }
-            } else if ("toggle".equals(action)) {
-                Long id = Long.parseLong(request.getParameter("id"));
-                Utilisateur utilisateur = entityManager.find(Utilisateur.class, id);
-                if (utilisateur != null) {
-                    utilisateur.setActif(!utilisateur.isActif());
-                    entityManager.merge(utilisateur);
+                case "supprimer": {
+                    Long id = Long.valueOf(req.getParameter("id"));
+                    Utilisateur utilisateur = em.find(Utilisateur.class, id);
+                    if (utilisateur != null) em.remove(utilisateur);
+                    break;
                 }
+                case "modifierMotDePasse": {
+                    Long id = Long.valueOf(req.getParameter("id"));
+                    Utilisateur utilisateur = em.find(Utilisateur.class, id);
+                    if (utilisateur != null) {
+                        utilisateur.setMotDePasse(req.getParameter("motDePasse"));
+                        em.merge(utilisateur);
+                    }
+                    break;
+                }
+                default:
+                    break;
             }
-
-            userTransaction.commit();
-            response.sendRedirect(request.getContextPath() + "/utilisateurs");
+            resp.sendRedirect(req.getContextPath() + "/utilisateurs");
         } catch (Exception e) {
-            try {
-                userTransaction.rollback();
-            } catch (Exception rollbackException) {
-                rollbackException.printStackTrace();
-            }
-            e.printStackTrace();
-            request.setAttribute("erreur", "Erreur lors de l'operation: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/erreur.jsp").forward(request, response);
+            req.setAttribute("erreur", e.getMessage());
+            req.getRequestDispatcher("/WEB-INF/views/erreur.jsp").forward(req, resp);
         }
-    }
-
-    private void enregistrerUtilisateur(HttpServletRequest request) {
-        String idStr = request.getParameter("id");
-        Utilisateur utilisateur;
-        boolean creation = idStr == null || idStr.isEmpty();
-
-        if (creation) {
-            utilisateur = new Utilisateur();
-            utilisateur.setDateCreation(LocalDate.now());
-            utilisateur.setActif(true);
-        } else {
-            Long id = Long.parseLong(idStr);
-            utilisateur = entityManager.find(Utilisateur.class, id);
-        }
-
-        utilisateur.setNom(request.getParameter("nom"));
-        utilisateur.setPrenom(request.getParameter("prenom"));
-        utilisateur.setEmail(request.getParameter("email"));
-
-        String motDePasse = request.getParameter("motDePasse");
-        if (motDePasse != null && !motDePasse.isEmpty()) {
-            utilisateur.setMotDePasse(motDePasse);
-        }
-
-        String roleStr = request.getParameter("role");
-        if (roleStr != null && !roleStr.isEmpty()) {
-            utilisateur.setRole(Role.valueOf(roleStr));
-        }
-
-        if (creation) {
-            entityManager.persist(utilisateur);
-            entityManager.flush();
-            creerProfilEtudiantSiNecessaire(utilisateur);
-        } else {
-            entityManager.merge(utilisateur);
-        }
-    }
-
-    private void creerProfilEtudiantSiNecessaire(Utilisateur utilisateur) {
-        if (utilisateur == null || utilisateur.getId() == null || utilisateur.getRole() != Role.ETUDIANT) {
-            return;
-        }
-
-        Long total = entityManager.createQuery(
-                "SELECT COUNT(e) FROM Etudiant e WHERE e.utilisateur.id = :utilisateurId",
-                Long.class)
-            .setParameter("utilisateurId", utilisateur.getId())
-            .getSingleResult();
-
-        if (total > 0) {
-            return;
-        }
-
-        offreStageBean.findEtudiantByUtilisateurId(utilisateur.getId());
     }
 }

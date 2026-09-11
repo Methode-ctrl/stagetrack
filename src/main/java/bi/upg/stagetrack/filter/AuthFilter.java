@@ -7,50 +7,55 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
-/**
- * Filtre de sécurité vérifiant l'authentification sur toutes les URLs.
- * Autorise l'accès à /login et aux ressources statiques sans session.
- */
 @WebFilter("/*")
 public class AuthFilter implements Filter {
+
+    private static final String[] PUBLIC_URLS = {
+        "/login",
+        "/login.jsp",
+        "/index.jsp",
+        "/",
+        "/css/",
+        "/js/",
+        "/images/"
+    };
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletRequest  httpReq  = (HttpServletRequest)  request;
-        HttpServletResponse httpResp = (HttpServletResponse) response;
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
 
-        String uri  = httpReq.getRequestURI();
-        String ctx  = httpReq.getContextPath();
+        String path = req.getRequestURI().substring(req.getContextPath().length());
 
-        // ✅ URLs publiques — laisser passer sans vérification
-        boolean isPublic =
-            uri.equals(ctx + "/login")      ||
-            uri.equals(ctx + "/login.jsp")  ||
-            uri.equals(ctx + "/index.jsp")  ||
-            uri.equals(ctx + "/")           ||
-            uri.equals(ctx + "")            ||
-            uri.startsWith(ctx + "/css/")   ||
-            uri.startsWith(ctx + "/js/")    ||
-            uri.startsWith(ctx + "/images/");
+        boolean isPublic = false;
+        for (String publicUrl : PUBLIC_URLS) {
+            if (path.equals(publicUrl) || path.startsWith(publicUrl)) {
+                isPublic = true;
+                break;
+            }
+        }
 
         if (isPublic) {
             chain.doFilter(request, response);
             return;
         }
 
-        // Vérifier la session
-        HttpSession session = httpReq.getSession(false);
+        HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("utilisateur") == null) {
-            httpResp.sendRedirect(ctx + "/login");
+            resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
-        // Laisser passer — contrôle de rôle géré dans chaque Servlet
         chain.doFilter(request, response);
     }
 
-    @Override public void init(FilterConfig fc) throws ServletException {}
-    @Override public void destroy() {}
+    @Override
+    public void destroy() {
+    }
 }
