@@ -5,7 +5,7 @@
 
 <p align="center">
   <strong>🎓 Université Polytechnique de Gitega (UPG)</strong><br>
-  <em>Faculté FTIC — Filière Génie Logiciel — BAC3</em><br>
+  <em>Faculté FTIC — Filière Génie Logiciel — BAC4</em><br>
   <em>Année Académique 2025–2026</em><br>
   <br>
   <strong>Cours : Projet Libre Java EE — Application Web Multi-tiers</strong>
@@ -711,7 +711,7 @@ Responsable de **toute la couche technique** : base de données, persistance, m�
 | `utilisateur_id` | BIGINT | FK → utilisateur.id, UNIQUE, ON DELETE CASCADE | Lien vers compte utilisateur |
 | `matricule` | VARCHAR(50) | NOT NULL, UNIQUE | Matricule étudiant |
 | `filiere` | VARCHAR(100) | NOT NULL | Filière (ex: Génie Logiciel) |
-| `promotion` | VARCHAR(50) | NOT NULL | Promotion (ex: BAC3) |
+| `promotion` | VARCHAR(50) | NOT NULL | Promotion (ex: BAC4) |
 
 #### `superviseur`
 | Colonne | Type | Contraintes | Description |
