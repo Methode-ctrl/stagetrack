@@ -9,7 +9,7 @@
   function calculerNote() {
     var inputStage = document.getElementById('noteStage');
     var inputRapport = document.getElementById('noteRapport');
-    var inputPresentation = document.getElementById('notePresentation');
+    var inputPresentation = document.getElementById('notePresence');
     if (!inputStage || !inputRapport || !inputPresentation) {
       return;
     }
@@ -39,7 +39,7 @@
     }
   }
 
-  ['noteStage', 'noteRapport', 'notePresentation'].forEach(function (id) {
+  ['noteStage', 'noteRapport', 'notePresence'].forEach(function (id) {
     var el = document.getElementById(id);
     if (el) {
       el.addEventListener('input', calculerNote);

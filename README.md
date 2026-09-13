@@ -14,7 +14,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Java_EE-10-E76F00?logo=oracle&logoColor=white" alt="Java EE 10"/>
   <img src="https://img.shields.io/badge/GlassFish-7.0.9-E74C3C" alt="GlassFish 7"/>
-  <img src="https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white" alt="MySQL 8"/>
+  <img src="https://img.shields.io/badge/PostgreSQL-18-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL 18"/>
   <img src="https://img.shields.io/badge/JDK-21-0F9D58?logo=openjdk&logoColor=white" alt="JDK 21"/>
   <img src="https://img.shields.io/badge/Maven-3.8+-C71A36?logo=apache-maven&logoColor=white" alt="Maven"/>
 </p>
@@ -42,6 +42,7 @@
 - [8. Guide d'Installation et Démarrage](#8-guide-dinstallation-et-démarrage)
 - [9. Choix Techniques Justifiés](#9-choix-techniques-justifiés)
 - [10. Conformité au Cahier des Charges](#10-conformité-au-cahier-des-charges)
+- [11. Journal des Corrections et Améliorations](#11-journal-des-corrections-et-améliorations)
 
 ---
 
@@ -84,14 +85,17 @@ Avec les cas alternatifs : `DOSSIER_INCOMPLET` (retour à l'étudiant) et `PAUSE
 |-------------|---------|----------------------|
 | Java | 21 | Langage de programmation principal |
 | Jakarta Servlet | 6.0 | Contrôleurs HTTP (8 Servlets) |
-| Jakarta JSP + JSTL | 3.0 | Vues dynamiques *(en cours)* |
-| Jakarta EJB | 4.0 | Logique métier (4 Stateless Beans) |
+| Jakarta JSP + JSTL | 3.0 | Vues dynamiques (27 JSP, zéro scriptlet) |
+| Jakarta EJB | 4.0 | Logique métier (5 Stateless Beans) |
 | Jakarta JPA / EclipseLink | 3.0 | Persistance des données (9 entités) |
 | Jakarta CDI | 4.0 | Injection de dépendances |
 | GlassFish | 7.0.9 | Serveur d'application Jakarta EE |
-| MySQL | 8.x | Système de gestion de base de données |
+| PostgreSQL | 18.x | Système de gestion de base de données (déploiement) |
 | Maven | 3.8+ | Gestion du build et des dépendances |
 | JDK | 21 | Kit de développement Java |
+| UTF-8 | — | Encodage global (pomp, filtres, web.xml, JSP) |
+
+> **Note :** Le script `stagetrack-postgresql.sql` fournit le schéma et les données de test pour **PostgreSQL 18** (base réellement déployée). Le schéma a été conçu au départ pour MySQL 8 ; les deux moteurs restent compatibles au niveau des entités JPA.
 
 ### Dépendances Maven
 
@@ -115,6 +119,8 @@ Avec les cas alternatifs : `DOSSIER_INCOMPLET` (retour à l'étudiant) et `PAUSE
 ```
 
 > **Note :** Aucun framework Spring, JSF, ou REST n'est utilisé. Le projet est 100% Jakarta EE natif.
+>
+> **Encodage build :** `pom.xml` force `project.build.sourceEncoding` et `project.reporting.outputEncoding` à `UTF-8`, ainsi que `<encoding>UTF-8</encoding>` dans `maven-compiler-plugin`.
 
 ---
 
@@ -125,20 +131,21 @@ Avec les cas alternatifs : `DOSSIER_INCOMPLET` (retour à l'étudiant) et `PAUSE
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                  COUCHE PRÉSENTATION                     │
-│  JSP/JSTL + CSS + JavaScript                            │
-│  (Responsable : NSABIYUMVA Nice Stella — en cours)      │
+│  27 JSP/JSTL + 4 CSS + 2 JS (design système complet)    │
+│  (Responsable : NSABIYUMVA Nice Stella — terminé)       │
 └───────────────────────┬─────────────────────────────────┘
                         │ HTTP (Servlet)
 ┌───────────────────────▼─────────────────────────────────┐
 │                  COUCHE CONTRÔLEUR                       │
-│  8 Servlets Jakarta Servlet 6.0                         │
-│  + AuthFilter (sécurité)                                │
+│  8 Servlets Jakarta Servlet 6.0 + AuthFilter (sécurité,  │
+│  contrôle de rôle par action, encodage UTF-8)           │
+│  + util/WebUtil                                         │
 │  (Responsable : NIYURUKUNDO Méthode)                    │
 └───────────────────────┬─────────────────────────────────┘
                         │ @EJB @Inject
 ┌───────────────────────▼─────────────────────────────────┐
 │                  COUCHE MÉTIER                           │
-│  4 EJB Session Beans @Stateless                         │
+│  5 EJB Session Beans @Stateless                         │
 │  (Responsable : NIYURUKUNDO Méthode)                    │
 └───────────────────────┬─────────────────────────────────┘
                         │ EntityManager
@@ -150,7 +157,7 @@ Avec les cas alternatifs : `DOSSIER_INCOMPLET` (retour à l'étudiant) et `PAUSE
                         │ JDBC
 ┌───────────────────────▼─────────────────────────────────┐
 │                  BASE DE DONNÉES                         │
-│  MySQL 8 — stagetrack_db — 9 tables                     │
+│  PostgreSQL 18 — stagetrack_db — 9 tables              │
 │  (Responsable : NIYURUKUNDO Méthode)                    │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -159,8 +166,9 @@ Avec les cas alternatifs : `DOSSIER_INCOMPLET` (retour à l'étudiant) et `PAUSE
 
 ```
 stagetrack/
-├── pom.xml                                      # Configuration Maven
-├── stagetrack.sql                               # Script de création de la BD + données de test
+├── pom.xml                                      # Configuration Maven (build UTF-8)
+├── stagetrack-postgresql.sql                    # Script PostgreSQL (schéma + données de test)
+├── .vscode/settings.json                        # Encodage UTF-8 (VS Code)
 ├── src/
 │   └── main/
 │       ├── java/bi/upg/stagetrack/
@@ -179,11 +187,12 @@ stagetrack/
 │       │   │   ├── Convention.java              #   Convention de stage
 │       │   │   ├── RapportStage.java            #   Rapport de stage
 │       │   │   └── Note.java                    #   Évaluation finale
-│       │   ├── ejb/                             # Logique métier (4 EJBs)
+│       │   ├── ejb/                             # Logique métier (5 EJBs)
 │       │   │   ├── OffreStageBean.java          #   CRUD offres + workflow
 │       │   │   ├── RapportStageBean.java        #   Gestion des rapports
 │       │   │   ├── NoteBean.java                #   Calcul des notes
-│       │   │   └── StatistiqueBean.java         #   Statistiques & compteurs
+│       │   │   ├── StatistiqueBean.java         #   Statistiques & compteurs
+│       │   │   └── GestionBean.java             #   CRUD utilisateurs & entreprises (transactionnel)
 │       │   ├── servlet/                         # Contrôleurs HTTP (8 Servlets)
 │       │   │   ├── AuthServlet.java             #   Login / Logout
 │       │   │   ├── DashboardServlet.java        #   Tableaux de bord
@@ -193,15 +202,23 @@ stagetrack/
 │       │   │   ├── ConventionServlet.java       #   Conventions de stage
 │       │   │   ├── UtilisateurServlet.java      #   CRUD utilisateurs
 │       │   │   └── EntrepriseServlet.java       #   CRUD entreprises
+│       │   ├── util/
+│       │   │   └── WebUtil.java                 #   Contrôle de rôle + messages d'erreur
 │       │   └── filter/
-│       │       └── AuthFilter.java              #   Filtre de sécurité HTTP
+│       │       └── AuthFilter.java              #   Filtre de sécurité + encodage UTF-8
 │       ├── resources/META-INF/
-│       │   └── persistence.xml                  #   Configuration JPA (EclipseLink)
-│       └── webapp/WEB-INF/
-│           ├── beans.xml                        #   Activation CDI
-│           └── views/                           #   Vues JSP (en cours)
+│       │   └── persistence.xml                  #   Configuration JPA (EclipseLink + PostgreSQL)
+│       └── webapp/
+│           ├── login.jsp                        #   Connexion moderne (split-screen)
+│           ├── index.jsp                        #   Redirection vers /login
+│           ├── css/                             #   main, navbar, components, animations
+│           ├── js/                              #   navbar.js, utils.js
+│           └── WEB-INF/
+│               ├── web.xml                      #   jsp-config : page-encoding + contentType UTF-8
+│               ├── beans.xml                    #   Activation CDI
+│               └── views/                       #   27 vues JSP (terminé)
 └── target/
-    └── stagetrack.war                           #   Artefact déployable
+    └── stagetrack.war                           #   Artefact déployable (généré, non versionné)
 ```
 
 ---
@@ -278,7 +295,7 @@ Responsable de **toute la couche technique** : base de données, persistance, m�
 - Champs : `id` (BIGINT PK), `noteStage` (DOUBLE), `noteRapport` (DOUBLE), `notePresence` (DOUBLE), `noteFinale` (DOUBLE), `mention` (VARCHAR 50), `appreciation` (TEXT), `dateAttribution` (DATETIME)
 - Relations : `rapportStage` (@OneToOne)
 
-#### 4.4 EJB Session Beans (4 fichiers)
+#### 4.4 EJB Session Beans (5 fichiers)
 
 **`OffreStageBean.java`** — `bi.upg.stagetrack.ejb.OffreStageBean` — `@Stateless`
 
@@ -332,7 +349,26 @@ Responsable de **toute la couche technique** : base de données, persistance, m�
 | `getSansSuperviseur()` | — | Offres sans superviseur affecté |
 | `getAllSuperviseurs()` | — | Tous les superviseurs |
 
+**`GestionBean.java`** — `bi.upg.stagetrack.ejb.GestionBean` — `@Stateless`
+
+EJB transactionnel dédié aux écritures des Servlets administratives (les `em.persist/remove` directs hors EJB échouent avec `TransactionRequiredException`).
+
+| Méthode | Paramètres | Description |
+|---------|------------|-------------|
+| `creerUtilisateur(...)` | infos + rôle | Crée utilisateur + entité Etudiant/Superviseur ; **pré-vérifie l'unicité de l'e-mail** |
+| `supprimerUtilisateur(Long)` | id | Supprime un utilisateur |
+| `modifierMotDePasse(Long, String)` | id + nouveau mdp | Change le mot de passe |
+| `creerEntreprise(...)` | 6 champs | Crée une entreprise |
+| `modifierEntreprise(...)` | id + champs | Modifie une entreprise |
+| `supprimerEntreprise(Long)` | id | Supprime une entreprise |
+
 #### 4.5 Servlets — Contrôleurs HTTP (8 fichiers)
+
+> **Contrôle de rôle par action :** chaque action vérifie le rôle via `WebUtil.exigerRole()` (`util/WebUtil.java`).
+> ADMIN → gestion utilisateurs/entreprises/notes/conventions, affectation et archivage ;
+> SUPERVISEUR → ouverture, validation, correction, démarrage, pause/reprise (offres) et évaluation (rapports) ;
+> ÉTUDIANT → soumission d'offres et de rapports, accès « Mon stage » et « Convention ».
+> Les accès non autorisés sont redirigés (302) vers le dashboard du rôle.
 
 **`AuthServlet.java`** — `@WebServlet("/login")`
 
@@ -354,11 +390,12 @@ Responsable de **toute la couche technique** : base de données, persistance, m�
 
 | Méthode | Action | Description |
 |---------|--------|-------------|
-| `doGet` | `nouvelle` | Forward vers `offre-etape1.jsp` (formulaire étape 1) |
-| `doGet` | `etape2` | Forward vers `offre-etape2.jsp` (choix entreprise) |
-| `doGet` | `etape3` | Forward vers `offre-etape3.jsp` (pièces jointes + résumé) |
-| `doGet` | `detail?id=X` | Forward vers `detail-offre.jsp` |
-| `doGet` | `affecter?id=X` | Forward vers formulaire d'affectation superviseur |
+| `doGet` | `nouvelle` | Forward vers `offre-etape1.jsp` (formulaire étape 1) — ÉTUDIANT |
+| `doGet` | `etape2` | Forward vers `offre-etape2.jsp` (choix entreprise) — ÉTUDIANT |
+| `doGet` | `etape3` | Forward vers `offre-etape3.jsp` (pièces jointes + résumé) — ÉTUDIANT |
+| `doGet` | `detail?id=X` | Forward vers `detail-offre.jsp` — ADMIN/SUPERVISEUR |
+| `doGet` | `affecter` | Forward vers formulaire d'affectation superviseur — ADMIN |
+| `doGet` | `mon-stage` | Page « Mes stages » (liste de ses demandes + bouton « Déposer une demande ») — ÉTUDIANT |
 | `doGet` | (défaut) | Forward vers `liste-offres.jsp` (filtrées par rôle) |
 | `doPost` | `soumettre` | Soumet l'offre (étape 3 → OFFRE_SOUMISE) |
 | `doPost` | `ouvrir` | Ouvre le dossier (→ EN_VALIDATION) |
@@ -419,17 +456,22 @@ Responsable de **toute la couche technique** : base de données, persistance, m�
 
 **`AuthFilter.java`** — `@WebFilter("/*")`
 
+- En première instruction : `request.setCharacterEncoding("UTF-8")` et `response.setCharacterEncoding("UTF-8")` (encodage global)
 - URL publiques (accessibles sans session) : `/login`, `/login.jsp`, `/index.jsp`, `/`, `/css/`, `/js/`, `/images/`
 - Pour toute autre URL : vérifie la présence de `HttpSession` avec l'attribut `"utilisateur"`
 - Sans session → redirection vers `/login`
+
+> **Complément :** `WEB-INF/web.xml` ajoute un `jsp-property-group` (`*.jsp`) qui force `page-encoding=UTF-8`,
+> `trim-directive-whitespaces` et `default-content-type=text/html;charset=UTF-8` — toutes les JSP sont lues et servies en UTF-8.
 
 ---
 
 ### 👩‍💻 NSABIYUMVA Nice Stella — Frontend
 
-> **Statut : Les fichiers frontend (JSP, CSS, JS) ne sont pas encore intégrés dans le code source du projet.** Le travail de présentation est en cours de développement. Les fichiers listés ci-dessous correspondent au plan de travail prévu.
+> **Statut : terminé.** L'ensemble des pages JSP, CSS et JavaScript est intégré au code source
+> (27 JSP dans `src/main/webapp`, 4 feuilles CSS, 2 fichiers JS) et déployé avec l'application.
 
-#### Fichiers CSS prévus
+#### Fichiers CSS
 
 | Fichier | Rôle |
 |---------|------|
@@ -438,37 +480,43 @@ Responsable de **toute la couche technique** : base de données, persistance, m�
 | `css/components.css` | Composants réutilisables : badges, cartes, boutons, formulaires, tableaux, alertes, timeline |
 | `css/animations.css` | Animations : fadeInUp, pulse-glow, slideInLeft |
 
-#### Fichiers JS prévus
+#### Fichiers JS
 
 | Fichier | Rôle |
 |---------|------|
 | `js/navbar.js` | Menu hamburger responsive, toggle sidebar sous 768px |
 | `js/utils.js` | Fonctions utilitaires : validation formulaires, gestion des étapes multi-formulaires |
 
-#### Fichiers JSP prévus
+#### Fichiers JSP
 
 | Fichier | Description |
 |---------|-------------|
-| `login.jsp` | Page de connexion (email + mot de passe) |
-| `index.jsp` | Page d'accueil / redirection |
-| `WEB-INF/views/include/head.jsp` | En-tête HTML, inclusion CSS/JS, balise `<head>` |
+| `login.jsp` | Page de connexion moderne (split-screen, icônes SVG, affichage mot de passe) |
+| `index.jsp` | Page d'accueil / redirection vers `/login` |
+| `WEB-INF/views/include/head.jsp` | En-tête HTML (meta charset UTF-8), inclusion CSS/JS |
 | `WEB-INF/views/include/navbar.jsp` | Barre de navigation latérale (conditionnelle par rôle via `<c:if>`) |
-| `WEB-INF/views/include/footer.jsp` | Pied de page, scripts JS |
+| `WEB-INF/views/include/footer.jsp` | Pied de page |
 | `WEB-INF/views/dashboard-admin.jsp` | Tableau de bord administrateur avec 4 cartes statistiques |
 | `WEB-INF/views/dashboard-superviseur.jsp` | Tableau de bord superviseur avec offres assignées |
-| `WEB-INF/views/dashboard-etudiant.jsp` | Tableau de bord étudiant avec progression |
+| `WEB-INF/views/dashboard-etudiant.jsp` | Tableau de bord étudiant : toutes les offres + notes + motifs de correction |
 | `WEB-INF/views/offre-etape1.jsp` | Formulaire multi-étapes — Étape 1 : infos offre |
 | `WEB-INF/views/offre-etape2.jsp` | Formulaire multi-étapes — Étape 2 : choix entreprise |
 | `WEB-INF/views/offre-etape3.jsp` | Formulaire multi-étapes — Étape 3 : pièces jointes + soumission |
-| `WEB-INF/views/liste-offres.jsp` | Liste des offres (filtrée par rôle) |
+| `WEB-INF/views/liste-offres.jsp` | Liste des offres (filtrée par rôle ; « Mes stages » pour l'étudiant) |
 | `WEB-INF/views/detail-offre.jsp` | Détail d'une offre avec workflow |
 | `WEB-INF/views/rapport-etape1.jsp` | Formulaire rapport — Étape 1 |
 | `WEB-INF/views/rapport-etape2.jsp` | Formulaire rapport — Étape 2 |
 | `WEB-INF/views/evaluer-rapport.jsp` | Formulaire d'évaluation d'un rapport |
+| `WEB-INF/views/resultat-note.jsp` | Résultat de la note finale (note + mention) |
+| `WEB-INF/views/noter-rapport.jsp` | Formulaire d'attribution de la note |
+| `WEB-INF/views/liste-rapports.jsp` | Liste des rapports (filtrée par rôle) |
+| `WEB-INF/views/liste-notes.jsp` | Liste des notes attribuées |
+| `WEB-INF/views/liste-conventions.jsp` | Liste des conventions |
 | `WEB-INF/views/convention.jsp` | Détail d'une convention de stage |
+| `WEB-INF/views/affecter-superviseur.jsp` | Formulaire d'affectation d'un superviseur (Admin) |
 | `WEB-INF/views/gestion-utilisateurs.jsp` | CRUD utilisateurs (Admin) |
 | `WEB-INF/views/gestion-entreprises.jsp` | CRUD entreprises (Admin) |
-| `WEB-INF/views/erreur.jsp` | Page d'erreur générique |
+| `WEB-INF/views/erreur.jsp` | Page d'erreur générique (message métier dégainé via `WebUtil.messageReel`) |
 | `WEB-INF/views/acces-refuse.jsp` | Page d'accès refusé |
 
 #### Design System
@@ -503,7 +551,9 @@ Responsable de **toute la couche technique** : base de données, persistance, m�
 | 13 | Convention de stage | Tous | ✅ Complet | Méthode |
 | 14 | Archivage dossiers | Admin | ✅ Complet | Méthode |
 | 15 | Sécurité / Filtre HTTP | Système | ✅ Complet | Méthode |
-| 16 | Interface utilisateur (JSP/CSS/JS) | Tous | 🔲 En cours | Nice Stella |
+| 16 | Interface utilisateur (JSP/CSS/JS) | Tous | ✅ Complet | Nice Stella |
+| 17 | Contrôle de rôle par action (`WebUtil`) | Tous | ✅ Complet | Méthode |
+| 18 | Encodage UTF-8 global (filtre + web.xml + JSP) | Système | ✅ Complet | Méthode |
 
 ### Détails Techniques des Fonctionnalités
 
@@ -801,7 +851,7 @@ Responsable de **toute la couche technique** : base de données, persistance, m�
 | Étudiant 1 | `irakoze@etud.upg.bi` | `etud123` | ETUDIANT |
 | Étudiant 2 | `nshimirimana@etud.upg.bi` | `etud123` | ETUDIANT |
 
-**Données supplémentaires :** 2 entreprises (BurundAI Tech, BIC Bank), 3 offres de stage (dont 1 en cours, 1 validée, 1 soumise), 1 convention, 1 rapport validé, 1 note (17.00 — Bien).
+**Données supplémentaires :** 3 entreprises (BurundAI Tech, BIC Bank, Semicolon Technologies), 4 offres de stage (en cours, en correction, dossier incomplet, archivée), 1 convention, rapports de stage (validé, en correction), 1 note finale (14.4/20 — Assez Bien).
 
 ---
 
@@ -813,31 +863,30 @@ Responsable de **toute la couche technique** : base de données, persistance, m�
 |-------|---------|--------------|
 | JDK | 21 | `java -version` |
 | Maven | 3.8+ | `mvn -version` |
-| MySQL | 8.x | `mysql --version` |
+| PostgreSQL | 18.x | `psql --version` |
 | GlassFish | 7.0.9 | `asadmin version` |
-| Driver MySQL | mysql-connector-j-9.x | dans `WEB-INF/lib/` ou `domain1/lib/` |
+| Driver PostgreSQL | postgresql-42.x | dans `domain1/lib/` |
 
 ### Étape 1 : Créer la Base de Données
 
 ```cmd
-mysql -u root -p < stagetrack.sql
+psql -U postgres -f stagetrack-postgresql.sql
 ```
 
 Ou manuellement :
 ```sql
-CREATE DATABASE IF NOT EXISTS stagetrack_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE stagetrack_db;
--- puis exécuter les CREATE TABLE et INSERT du fichier stagetrack.sql
+CREATE DATABASE stagetrack_db WITH ENCODING 'UTF8' LC_COLLATE 'C' LC_CTYPE 'C' TEMPLATE template0;
+-- puis exécuter les CREATE TABLE et INSERT du fichier stagetrack-postgresql.sql
 ```
 
 ### Étape 2 : Configurer la Source de Données GlassFish
 
 ```cmd
-# Créer le pool de connexion MySQL
+# Créer le pool de connexion PostgreSQL
 asadmin create-jdbc-connection-pool ^
-  --datasourceclassname=com.mysql.cj.jdbc.MysqlDataSource ^
+  --datasourceclassname=org.postgresql.ds.PGSimpleDataSource ^
   --restype=javax.sql.DataSource ^
-  --property=serverName=localhost:portNumber=3306:databaseName=stagetrack_db:user=root:password=VOTRE_MDP:useSSL=false:allowPublicKeyRetrieval=true ^
+  --property=serverName=localhost:portNumber=5432:databaseName=stagetrack_db:user=postgres:password=VOTRE_MDP ^
   stagetrackPool
 
 # Créer la ressource JNDI
@@ -918,21 +967,39 @@ La contrainte du cahier des charges se concentre sur l'architecture Java EE mult
 
 | Exigence du Professeur | Statut | Détail |
 |-------------------------|:------:|--------|
-| Servlet 6 (contrôleurs) | ✅ | 8 Servlets Jakarta Servlet 6.0 + AuthFilter |
-| JSP + JSTL (vues) | 🔲 | 20+ fichiers JSP planifiés *(en cours)* |
+| Servlet 6 (contrôleurs) | ✅ | 8 Servlets Jakarta Servlet 6.0 + AuthFilter + WebUtil |
+| JSP + JSTL (vues) | ✅ | **27 fichiers JSP** intégrés et déployés |
 | **ZÉRO scriptlet** dans JSP | ✅ | Vérifiable : aucun `<%` dans les JSP |
-| EJB @Stateless (métier) | ✅ | 4 EJBs avec 30+ méthodes business |
+| EJB @Stateless (métier) | ✅ | 5 EJBs avec 40+ méthodes business |
 | JPA / EclipseLink (persistance) | ✅ | 9 entités avec relations + JPQL |
 | CDI @Inject / @EJB | ✅ | Injection dans toutes les Servlets |
 | Minimum 3 rôles | ✅ | ADMIN, SUPERVISEUR, ETUDIANT |
 | Minimum 6 entités JPA | ✅ | **9 entités** (dépasse l'exigence) |
-| Minimum 3–4 EJBs | ✅ | **4 EJBs** (conforme) |
+| Minimum 3–4 EJBs | ✅ | **5 EJBs** (dépasse l'exigence) |
 | Workflow multi-états | ✅ | **11 états** avec transitions contrôlées |
 | Formulaires multi-étapes | ✅ | 3 étapes (offre) + 2 étapes (rapport) |
-| Authentification | ✅ | HttpSession + AuthFilter sur `/*` |
-| Script SQL + données de test | ✅ | 9 tables + 15+ enregistrements |
+| Authentification | ✅ | HttpSession + AuthFilter sur `/*` + contrôle de rôle par action |
+| Script SQL + données de test | ✅ | `stagetrack-postgresql.sql` (PostgreSQL 18) |
 | GlassFish 7 | ✅ | Déployé sur GlassFish 7.0.9 |
+| Encodage UTF-8 | ✅ | pom.xml + AuthFilter + `web.xml` (jsp-config) + directives JSP |
 | Pas de Spring / JSF / REST | ✅ | Vérifiable dans `pom.xml` — dépendances uniquement Jakarta EE + JSTL |
+
+---
+
+## 11. Journal des Corrections et Améliorations
+
+| # | Correction | Détail technique |
+|---|------------|------------------|
+| 1 | **Contrôle de rôle par action** | `util/WebUtil.java` (`aLeRole`, `exigerRole`→booléen + redirect, `messageReel`). Gardes par rôle dans `OffreStageServlet`, `RapportServlet`, `NoteServlet`, `ConventionServlet`, `UtilisateurServlet`, `EntrepriseServlet`, `DashboardServlet`. Évite le bug « Cannot forward after response has been committed » (le code s'arrête après une redirection). |
+| 2 | **Dashboard étudiant multi-offres** | `DashboardServlet` expose `offres` + `notesParOffre` + `motifParOffre` ; `dashboard-etudiant.jsp` itère toutes les offres (statut, note, timeline). |
+| 3 | **Motif EN_CORRECTION affiché** | `RapportStageBean.trouverCommentaireCorrection(offreId)` retourne le commentaire du rapport → affiché dans l'alerte du dashboard étudiant (au lieu d'un champ vide). |
+| 4 | **Erreur doublon e-mail lisible** | `GestionBean.creerUtilisateur` pré-vérifie `COUNT(email)` → message français ; `WebUtil.messageReel` dégage l'`EJBException` dans tous les catch de servlets. |
+| 5 | **Écritures transactionnelles** | `GestionBean` (nouvel EJB `@Stateless`) : `creer/supprimerUtilisateur`, `modifierMotDePasse`, `creer/modifier/supprimerEntreprise`. Les `em.persist/remove` directs dans un servlet échouaient avec `TransactionRequiredException`. |
+| 6 | **Encodage UTF-8 global** | `AuthFilter` (`setCharacterEncoding` en tête), `web.xml` (`jsp-property-group` : page-encoding, default-content-type UTF-8), directives `pageEncoding="UTF-8"` sur les 27 JSP, `pom.xml` (project.build.sourceEncoding / encoding compiler). |
+| 7 | **Login moderne** | `login.jsp` repensé en split-screen (panneau marque + formulaire), champs larges avec icônes SVG, bouton affichage/masquage du mot de passe, « Se souvenir de moi », bouton pleine largeur arrondi — couleurs inchangées (réutilisation des variables CSS). |
+| 8 | **Page « Mon stage »** | Remplace la redirection vers le dashboard : liste des demandes de l'étudiant + bouton « ＋ Déposer une demande » (topbar et état vide), titres conditionnels au rôle. |
+| 9 | **Note finale → offre `NOTE_ATTRIBUEE`** | `NoteBean.attribuerNote` met l'offre dans l'état terminal (le bouton « Archiver » du superviseur/administrateur devient disponible). |
+| 10 | **Unicité e-mail en base** | Contrainte `UNIQUE` sur `utilisateur.email` appliquée sur l'instance de déploiement (en complément du script SQL). |
 
 ---
 

@@ -1,6 +1,10 @@
 package bi.upg.stagetrack.servlet;
 
+import bi.upg.stagetrack.ejb.GestionBean;
 import bi.upg.stagetrack.entity.Entreprise;
+import bi.upg.stagetrack.enums.Role;
+import bi.upg.stagetrack.util.WebUtil;
+import jakarta.ejb.EJB;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.ServletException;
@@ -18,17 +22,21 @@ public class EntrepriseServlet extends HttpServlet {
     @PersistenceContext(unitName = "stagetrack-pu")
     private EntityManager em;
 
+    @EJB
+    private GestionBean gestionBean;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         try {
+            if (!WebUtil.exigerRole(req, resp, Role.ADMIN)) return;
             List<Entreprise> entreprises = em.createQuery(
                     "SELECT e FROM Entreprise e ORDER BY e.nom", Entreprise.class)
                     .getResultList();
             req.setAttribute("entreprises", entreprises);
             req.getRequestDispatcher("/WEB-INF/views/gestion-entreprises.jsp").forward(req, resp);
         } catch (Exception e) {
-            req.setAttribute("erreur", e.getMessage());
+            req.setAttribute("erreur", WebUtil.messageReel(e));
             req.getRequestDispatcher("/WEB-INF/views/erreur.jsp").forward(req, resp);
         }
     }
@@ -37,37 +45,33 @@ public class EntrepriseServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         try {
+            if (!WebUtil.exigerRole(req, resp, Role.ADMIN)) return;
             String action = req.getParameter("action");
 
             switch (action) {
                 case "creer": {
-                    Entreprise entreprise = new Entreprise(
+                    gestionBean.creerEntreprise(
                             req.getParameter("nom"),
                             req.getParameter("adresse"),
                             req.getParameter("telephone"),
                             req.getParameter("email"),
                             req.getParameter("secteur"),
                             req.getParameter("representant"));
-                    em.persist(entreprise);
                     break;
                 }
                 case "modifier": {
-                    Long id = Long.valueOf(req.getParameter("id"));
-                    Entreprise entreprise = em.find(Entreprise.class, id);
-                    if (entreprise == null) throw new IllegalArgumentException("Entreprise introuvable");
-                    entreprise.setNom(req.getParameter("nom"));
-                    entreprise.setAdresse(req.getParameter("adresse"));
-                    entreprise.setTelephone(req.getParameter("telephone"));
-                    entreprise.setEmail(req.getParameter("email"));
-                    entreprise.setSecteur(req.getParameter("secteur"));
-                    entreprise.setRepresentant(req.getParameter("representant"));
-                    em.merge(entreprise);
+                    gestionBean.modifierEntreprise(
+                            Long.valueOf(req.getParameter("id")),
+                            req.getParameter("nom"),
+                            req.getParameter("adresse"),
+                            req.getParameter("telephone"),
+                            req.getParameter("email"),
+                            req.getParameter("secteur"),
+                            req.getParameter("representant"));
                     break;
                 }
                 case "supprimer": {
-                    Long id = Long.valueOf(req.getParameter("id"));
-                    Entreprise entreprise = em.find(Entreprise.class, id);
-                    if (entreprise != null) em.remove(entreprise);
+                    gestionBean.supprimerEntreprise(Long.valueOf(req.getParameter("id")));
                     break;
                 }
                 default:
@@ -75,7 +79,7 @@ public class EntrepriseServlet extends HttpServlet {
             }
             resp.sendRedirect(req.getContextPath() + "/entreprises");
         } catch (Exception e) {
-            req.setAttribute("erreur", e.getMessage());
+            req.setAttribute("erreur", WebUtil.messageReel(e));
             req.getRequestDispatcher("/WEB-INF/views/erreur.jsp").forward(req, resp);
         }
     }

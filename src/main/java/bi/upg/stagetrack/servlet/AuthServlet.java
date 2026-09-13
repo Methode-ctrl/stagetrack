@@ -32,7 +32,7 @@ public class AuthServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
-        req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
+        req.getRequestDispatcher("/login.jsp").forward(req, resp);
     }
 
     @Override
@@ -49,17 +49,18 @@ public class AuthServlet extends HttpServlet {
 
             if (resultats.isEmpty() || !resultats.get(0).getMotDePasse().equals(motDePasse)) {
                 req.setAttribute("erreur", "Email ou mot de passe incorrect.");
-                req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
+                req.getRequestDispatcher("/login.jsp").forward(req, resp);
                 return;
             }
 
             Utilisateur utilisateur = resultats.get(0);
             HttpSession session = req.getSession(true);
             session.setAttribute("utilisateur", utilisateur);
+            session.setAttribute("role", utilisateur.getRole().name());
 
             resp.sendRedirect(req.getContextPath() + "/dashboard");
         } catch (Exception e) {
-            req.setAttribute("erreur", e.getMessage());
+            req.setAttribute("erreur", bi.upg.stagetrack.util.WebUtil.messageReel(e));
             req.getRequestDispatcher("/WEB-INF/views/erreur.jsp").forward(req, resp);
         }
     }

@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="fr">
@@ -52,11 +52,35 @@
                 </div>
                 <div class="form-group">
                   <label class="form-label">Rôle <span class="required">*</span></label>
-                  <select class="form-control" name="role" required>
+                  <select class="form-control" name="role" required id="roleSelect">
                     <option value="ETUDIANT">Étudiant</option>
                     <option value="SUPERVISEUR">Superviseur</option>
                     <option value="ADMIN">Administrateur</option>
                   </select>
+                </div>
+              </div>
+              <div class="grid-2 mt-2" id="etudiantFields">
+                <div class="form-group">
+                  <label class="form-label">Matricule <span class="required">*</span></label>
+                  <input class="form-control" name="matricule" required/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Filière <span class="required">*</span></label>
+                  <input class="form-control" name="filiere" required/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Promotion <span class="required">*</span></label>
+                  <input class="form-control" name="promotion" required/>
+                </div>
+              </div>
+              <div class="grid-2 mt-2" id="superviseurFields" style="display:none;">
+                <div class="form-group">
+                  <label class="form-label">Grade</label>
+                  <input class="form-control" name="grade"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Spécialité</label>
+                  <input class="form-control" name="specialite"/>
                 </div>
               </div>
               <button type="submit" class="btn btn-primary">Créer le compte</button>
@@ -86,7 +110,6 @@
                         <th>Nom</th>
                         <th>E-mail</th>
                         <th>Rôle</th>
-                        <th>Statut</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
@@ -99,36 +122,13 @@
                           <td class="cell-secondary"><c:out value="${user.email}"/></td>
                           <td><span class="badge badge-role-<c:out value="${user.role}"/>"><c:out value="${user.role}"/></span></td>
                           <td>
-                            <c:choose>
-                              <c:when test="${user.actif}">
-                                <span class="badge" style="background:#064E3B; color:#34D399;">Actif</span>
-                              </c:when>
-                              <c:otherwise>
-                                <span class="badge" style="background:#7F1D1D; color:#F87171;">Désactivé</span>
-                              </c:otherwise>
-                            </c:choose>
-                          </td>
-                          <td>
                             <c:if test="${user.role != 'ADMIN' || sessionScope.utilisateur.id != user.id}">
                               <div class="inline-flex gap-1">
                                 <form class="inline-form" method="post"
-                                      action="${pageContext.request.contextPath}/utilisateurs?action=toggle-actif">
-                                  <input type="hidden" name="userId" value="<c:out value="${user.id}"/>"/>
-                                  <c:choose>
-                                    <c:when test="${user.actif}">
-                                      <button type="submit" class="btn btn-warning btn-sm"
-                                              onclick="return confirm('Désactiver ce compte ?');">Désactiver</button>
-                                    </c:when>
-                                    <c:otherwise>
-                                      <button type="submit" class="btn btn-success btn-sm">Activer</button>
-                                    </c:otherwise>
-                                  </c:choose>
-                                </form>
-                                <form class="inline-form" method="post"
                                       data-confirm="Supprimer définitivement cet utilisateur ?"
                                       action="${pageContext.request.contextPath}/utilisateurs?action=supprimer">
-                                  <input type="hidden" name="userId" value="<c:out value="${user.id}"/>"/>
-                                  <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                                  <input type="hidden" name="id" value="<c:out value="${user.id}"/>"/>
+                                  <button type="submit" class="btn btn-danger btn-sm">🗑️ Supprimer</button>
                                 </form>
                               </div>
                             </c:if>
@@ -148,5 +148,20 @@
   <%@ include file="include/footer.jsp" %>
   <script src="${pageContext.request.contextPath}/js/navbar.js"></script>
   <script src="${pageContext.request.contextPath}/js/utils.js"></script>
+  <script>
+    (function(){
+      var roleSelect = document.getElementById('roleSelect');
+      var btn = document.getElementById('etudiantFields');
+      var sup = document.getElementById('superviseurFields');
+      function maj(){
+        var r = roleSelect.value;
+        btn.style.display = (r === 'ETUDIANT') ? '' : 'none';
+        sup.style.display = (r === 'SUPERVISEUR') ? '' : 'none';
+        btn.querySelectorAll('[required]').forEach(function(f){ f.required = (r === 'ETUDIANT'); });
+      }
+      roleSelect.addEventListener('change', maj);
+      maj();
+    })();
+  </script>
 </body>
 </html>

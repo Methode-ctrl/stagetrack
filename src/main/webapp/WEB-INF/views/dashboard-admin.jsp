@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -59,21 +59,21 @@
             </div>
             <div class="card-body">
               <c:forEach items="${sansSuperviseur}" var="offre">
-                <form class="order-item mb-2" method="post" action="${pageContext.request.contextPath}/offres?action=affecter">
+                <form class="order-item mb-2" method="post" action="${pageContext.request.contextPath}/offres?action=affecterSuperviseur">
                   <div class="order-avatar orange">📌</div>
                   <div class="order-body">
                     <div class="order-name">
-                      <c:out value="${offre.etudiant.prenom}"/> <c:out value="${offre.etudiant.nom}"/>
+                      <c:out value="${offre.etudiant.utilisateur.prenom}"/> <c:out value="${offre.etudiant.utilisateur.nom}"/>
                       <span class="text-muted">— <c:out value="${offre.entreprise.nom}"/></span>
                     </div>
-                    <div class="order-meta"><c:out value="${offre.intitulePoste}"/></div>
+                    <div class="order-meta"><c:out value="${offre.titre}"/></div>
                   </div>
                   <input type="hidden" name="offreId" value="<c:out value="${offre.id}"/>"/>
                   <select name="superviseurId" class="form-control" style="width:auto;" required>
                     <option value="" disabled selected>Choisir un superviseur…</option>
                     <c:forEach items="${superviseurs}" var="sup">
                       <option value="<c:out value="${sup.id}"/>">
-                        <c:out value="${sup.prenom}"/> <c:out value="${sup.nom}"/>
+                        <c:out value="${sup.utilisateur.prenom}"/> <c:out value="${sup.utilisateur.nom}"/>
                       </option>
                     </c:forEach>
                   </select>
@@ -113,10 +113,10 @@
                       <c:forEach items="${offres}" var="offre">
                         <tr>
                           <td>
-                            <strong><c:out value="${offre.etudiant.prenom}"/> <c:out value="${offre.etudiant.nom}"/></strong>
+                            <strong><c:out value="${offre.etudiant.utilisateur.prenom}"/> <c:out value="${offre.etudiant.utilisateur.nom}"/></strong>
                           </td>
                           <td><c:out value="${offre.entreprise.nom}"/></td>
-                          <td class="cell-secondary"><c:out value="${offre.intitulePoste}"/></td>
+                          <td class="cell-secondary"><c:out value="${offre.titre}"/></td>
                           <td><span class="badge badge-<c:out value="${offre.statut}"/>"><c:out value="${offre.statut}"/></span></td>
                         </tr>
                       </c:forEach>
@@ -145,8 +145,8 @@
                     <a class="order-item" href="${pageContext.request.contextPath}/offres?action=detail&amp;id=${offre.id}">
                       <div class="order-avatar green">👨‍🎓</div>
                       <div class="order-body">
-                        <div class="order-name"><c:out value="${offre.etudiant.prenom}"/> <c:out value="${offre.etudiant.nom}"/></div>
-                        <div class="order-meta"><c:out value="${offre.entreprise.nom}"/> · <c:out value="${offre.intitulePoste}"/></div>
+                        <div class="order-name"><c:out value="${offre.etudiant.utilisateur.prenom}"/> <c:out value="${offre.etudiant.utilisateur.nom}"/></div>
+                        <div class="order-meta"><c:out value="${offre.entreprise.nom}"/> · <c:out value="${offre.titre}"/></div>
                       </div>
                       <span class="badge badge-<c:out value="${offre.statut}"/>"><c:out value="${offre.statut}"/></span>
                     </a>

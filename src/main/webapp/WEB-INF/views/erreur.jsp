@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="fr">
@@ -24,15 +24,8 @@
             <div style="font-size:64px;">😵</div>
             <h2 class="mt-2">Une erreur s'est produite</h2>
             <p class="text-secondary mt-1 mb-3">
-              <c:choose>
-                <c:when test="${not empty messageErreur}">
-                  <c:out value="${messageErreur}"/>
-                </c:when>
-                <c:otherwise>
-                  Une erreur inattendue est survenue. Veuillez réessayer ou contacter l'administration.
-                </c:otherwise>
-              </c:choose>
-            </p>
+                ${not empty erreur ? erreur : not empty messageErreur ? messageErreur : 'Une erreur inattendue est survenue. Veuillez réessayer ou contacter l\'administration.'}
+              </p>
             <div class="inline-flex gap-2">
               <a class="btn btn-primary" href="javascript:history.back()">← Retour</a>
               <a class="btn btn-secondary" href="${pageContext.request.contextPath}/dashboard">🏠 Accueil</a>

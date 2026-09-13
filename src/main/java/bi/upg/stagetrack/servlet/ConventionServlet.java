@@ -1,7 +1,8 @@
 package bi.upg.stagetrack.servlet;
 
 import bi.upg.stagetrack.entity.Convention;
-import jakarta.ejb.Stateless;
+import bi.upg.stagetrack.enums.Role;
+import bi.upg.stagetrack.util.WebUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.ServletException;
@@ -23,6 +24,7 @@ public class ConventionServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         try {
+            if (!WebUtil.exigerRole(req, resp, Role.ADMIN)) return;
             String action = req.getParameter("action");
             if ("detail".equals(action)) {
                 Long id = Long.valueOf(req.getParameter("id"));
@@ -37,7 +39,7 @@ public class ConventionServlet extends HttpServlet {
                 req.getRequestDispatcher("/WEB-INF/views/liste-conventions.jsp").forward(req, resp);
             }
         } catch (Exception e) {
-            req.setAttribute("erreur", e.getMessage());
+            req.setAttribute("erreur", WebUtil.messageReel(e));
             req.getRequestDispatcher("/WEB-INF/views/erreur.jsp").forward(req, resp);
         }
     }

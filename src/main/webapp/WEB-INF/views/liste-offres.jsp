@@ -1,10 +1,10 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <c:set var="pageTitle" value="Liste des stages"/>
+  <c:set var="pageTitle" value="${sessionScope.role == 'ETUDIANT' ? 'Mes stages' : 'Liste des stages'}"/>
   <%@ include file="include/head.jsp" %>
 </head>
 <body>
@@ -14,9 +14,18 @@
     <div class="main-area">
       <div class="topbar">
         <button type="button" class="hamburger" aria-label="Ouvrir le menu">☰</button>
-        <span class="topbar-title">Tous les stages</span>
+        <span class="topbar-title">
+          <c:choose>
+            <c:when test="${sessionScope.role == 'ETUDIANT'}">Mes stages</c:when>
+            <c:otherwise>Tous les stages</c:otherwise>
+          </c:choose>
+        </span>
         <div class="topbar-spacer"></div>
         <div class="topbar-actions">
+          <c:if test="${sessionScope.role == 'ETUDIANT'}">
+            <a class="btn btn-primary btn-sm"
+               href="${pageContext.request.contextPath}/offres?action=nouvelle">＋ Déposer une demande</a>
+          </c:if>
           <input class="form-control" id="filtreRecherche" type="search"
                  placeholder="🔎 Rechercher…" style="width:220px;"/>
         </div>
@@ -24,8 +33,18 @@
 
       <div class="page-content">
         <div class="hero">
-          <h1>📋 <span class="hero-gradient">Tous les stages</span></h1>
-          <p>Filtrez par étudiant, entreprise, poste ou statut.</p>
+          <h1>📋 <span class="hero-gradient">
+            <c:choose>
+              <c:when test="${sessionScope.role == 'ETUDIANT'}">Mes stages</c:when>
+              <c:otherwise>Tous les stages</c:otherwise>
+            </c:choose>
+          </span></h1>
+          <p>
+            <c:choose>
+              <c:when test="${sessionScope.role == 'ETUDIANT'}">Retrouvez vos demandes de stage et leur statut de suivi.</c:when>
+              <c:otherwise>Filtrez par étudiant, entreprise, poste ou statut.</c:otherwise>
+            </c:choose>
+          </p>
         </div>
 
         <c:choose>
@@ -34,6 +53,10 @@
               <div class="empty-icon">🗂️</div>
               <h3>Aucun stage enregistré</h3>
               <p>Les dossiers soumis apparaîtront ici.</p>
+              <c:if test="${sessionScope.role == 'ETUDIANT'}">
+                <a class="btn btn-primary mt-2"
+                   href="${pageContext.request.contextPath}/offres?action=nouvelle">＋ Déposer votre première demande</a>
+              </c:if>
             </div>
           </c:when>
           <c:otherwise>
@@ -53,14 +76,14 @@
                   <c:forEach items="${offres}" var="offre">
                     <tr>
                       <td>
-                        <strong><c:out value="${offre.etudiant.prenom}"/> <c:out value="${offre.etudiant.nom}"/></strong>
+                        <strong><c:out value="${offre.etudiant.utilisateur.prenom}"/> <c:out value="${offre.etudiant.utilisateur.nom}"/></strong>
                       </td>
                       <td><c:out value="${offre.entreprise.nom}"/></td>
-                      <td class="cell-secondary"><c:out value="${offre.intitulePoste}"/></td>
+                      <td class="cell-secondary"><c:out value="${offre.titre}"/></td>
                       <td class="cell-secondary">
                         <c:choose>
                           <c:when test="${not empty offre.superviseur}">
-                            <c:out value="${offre.superviseur.prenom}"/> <c:out value="${offre.superviseur.nom}"/>
+                            <c:out value="${offre.superviseur.utilisateur.prenom}"/> <c:out value="${offre.superviseur.utilisateur.nom}"/>
                           </c:when>
                           <c:otherwise><span class="text-warning">Non affecté</span></c:otherwise>
                         </c:choose>

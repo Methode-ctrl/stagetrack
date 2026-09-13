@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <c:set var="pageTitle" value="Évaluer le rapport"/>
+  <c:set var="pageTitle" value="Attribuer la note"/>
   <%@ include file="include/head.jsp" %>
 </head>
 <body>
@@ -12,7 +12,7 @@
     <div class="main-area">
       <div class="topbar">
         <button type="button" class="hamburger" aria-label="Ouvrir le menu">☰</button>
-        <span class="topbar-title">Évaluation</span>
+        <span class="topbar-title">Notation du rapport</span>
         <div class="topbar-spacer"></div>
         <a class="btn btn-secondary btn-sm" href="javascript:history.back()">← Retour</a>
       </div>
@@ -44,38 +44,20 @@
               <div class="grid-2">
                 <div class="form-group">
                   <label class="form-label">Note de stage (×40%) <span class="required">*</span></label>
-                  <input class="form-control" type="number" id="noteStage" name="noteStage"
-                         min="0" max="20" step="0.5" required
-                         placeholder="0 à 20"/>
-                  <p class="form-hint">Assiduité, implication, réalisation des tâches.</p>
+                  <input class="form-control" type="number" name="noteStage" min="0" max="20" step="0.5" required placeholder="0 à 20"/>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Note du rapport (×40%) <span class="required">*</span></label>
-                  <input class="form-control" type="number" id="noteRapport" name="noteRapport"
-                         min="0" max="20" step="0.5" required
-                         placeholder="0 à 20"/>
-                  <p class="form-hint">Qualité rédactionnelle, pertinence du contenu.</p>
+                  <input class="form-control" type="number" name="noteRapport" min="0" max="20" step="0.5" required placeholder="0 à 20"/>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Note de présentation (×20%) <span class="required">*</span></label>
-                  <input class="form-control" type="number" id="notePresence" name="notePresence"
-                         min="0" max="20" step="0.5" required
-                         placeholder="0 à 20"/>
-                  <p class="form-hint">Soutenance, communication, supports utilisés.</p>
-                </div>
-                <div class="card" style="background:var(--bg-secondary);">
-                  <div class="card-body text-center">
-                    <p class="text-muted mb-0">Note finale calculée</p>
-                    <p class="note-finale-value mt-0" id="noteFinaleAffichee" style="font-size:44px;">—</p>
-                    <p class="mt-1 mb-0"><strong id="mentionAffichee" style="color:var(--text-secondary);">—</strong></p>
-                  </div>
+                  <input class="form-control" type="number" name="notePresence" min="0" max="20" step="0.5" required placeholder="0 à 20"/>
                 </div>
               </div>
-
               <div class="form-group">
                 <label class="form-label">Appréciation <span class="required">*</span></label>
-                <textarea class="form-control" name="appreciation" rows="4" required
-                          placeholder="Rédigez une appréciation détaillée du travail de l'étudiant…"></textarea>
+                <textarea class="form-control" name="appreciation" rows="4" required placeholder="Appréciation détaillée du travail…"></textarea>
               </div>
             </div>
           </div>
@@ -87,6 +69,5 @@
   </div>
   <%@ include file="include/footer.jsp" %>
   <script src="${pageContext.request.contextPath}/js/navbar.js"></script>
-  <script src="${pageContext.request.contextPath}/js/utils.js"></script>
 </body>
 </html>

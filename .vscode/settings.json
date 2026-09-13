@@ -1,0 +1,10 @@
+{
+    "files.encoding": "utf8",
+    "files.autoGuessEncoding": false,
+    "[java]": {
+        "files.encoding": "utf8"
+    },
+    "[jsp]": {
+        "files.encoding": "utf8"
+    }
+}

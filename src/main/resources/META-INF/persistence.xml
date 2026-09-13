@@ -8,12 +8,6 @@
     <persistence-unit name="stagetrack-pu" transaction-type="JTA">
         <jta-data-source>jdbc/stagetrackDS</jta-data-source>
 
-        <properties>
-            <property name="eclipselink.ddl-generation" value="none"/>
-            <property name="eclipselink.target-database" value="MySQL"/>
-            <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
-        </properties>
-
         <class>bi.upg.stagetrack.entity.Utilisateur</class>
         <class>bi.upg.stagetrack.entity.Etudiant</class>
         <class>bi.upg.stagetrack.entity.Superviseur</class>
@@ -23,5 +17,11 @@
         <class>bi.upg.stagetrack.entity.Convention</class>
         <class>bi.upg.stagetrack.entity.RapportStage</class>
         <class>bi.upg.stagetrack.entity.Note</class>
+
+        <properties>
+            <property name="eclipselink.ddl-generation" value="none"/>
+            <property name="eclipselink.target-database" value="PostgreSQL"/>
+            <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
+        </properties>
     </persistence-unit>
 </persistence>

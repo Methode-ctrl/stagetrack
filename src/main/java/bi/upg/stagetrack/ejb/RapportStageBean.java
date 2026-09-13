@@ -96,6 +96,15 @@ public class RapportStageBean {
         return q.getResultList();
     }
 
+    public String trouverCommentaireCorrection(Long offreId) {
+        TypedQuery<RapportStage> q = em.createQuery(
+            "SELECT r FROM RapportStage r WHERE r.offreStage.id = :oid AND r.statut = :st ORDER BY r.dateSoumission DESC",
+            RapportStage.class);
+        q.setParameter("oid", offreId);
+        q.setParameter("st", StatutRapport.EN_CORRECTION);
+        return q.getResultList().stream().findFirst().map(RapportStage::getCommentaire).orElse(null);
+    }
+
     public List<RapportStage> listerTous() {
         return em.createQuery(
             "SELECT r FROM RapportStage r ORDER BY r.dateSoumission DESC", RapportStage.class)

@@ -2,9 +2,11 @@ package bi.upg.stagetrack.ejb;
 
 import bi.upg.stagetrack.entity.Note;
 import bi.upg.stagetrack.entity.RapportStage;
+import bi.upg.stagetrack.enums.StatutOffre;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import java.time.LocalDateTime;
 
 @Stateless
@@ -41,6 +43,17 @@ public class NoteBean {
         note.setDateAttribution(LocalDateTime.now());
 
         em.persist(note);
+
+        rapport.getOffreStage().setStatut(StatutOffre.NOTE_ATTRIBUEE);
+        em.merge(rapport.getOffreStage());
+
         return note;
+    }
+
+    public Note trouverNoteParOffre(Long offreId) {
+        TypedQuery<Note> q = em.createQuery(
+            "SELECT n FROM Note n WHERE n.rapportStage.offreStage.id = :oid", Note.class);
+        q.setParameter("oid", offreId);
+        return q.getResultList().stream().findFirst().orElse(null);
     }
 }

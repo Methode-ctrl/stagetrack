@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="fr">
@@ -43,20 +43,16 @@
                   <input class="form-control" name="secteur" required/>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Ville <span class="required">*</span></label>
-                  <input class="form-control" name="ville" required/>
-                </div>
-                <div class="form-group">
                   <label class="form-label">Adresse</label>
                   <input class="form-control" name="adresse"/>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Nom du responsable</label>
-                  <input class="form-control" name="nomResponsable"/>
+                  <input class="form-control" name="representant"/>
                 </div>
                 <div class="form-group">
                   <label class="form-label">E-mail contact</label>
-                  <input class="form-control" type="email" name="emailContact"/>
+                  <input class="form-control" type="email" name="email"/>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Téléphone</label>
@@ -89,7 +85,7 @@
                       <tr>
                         <th>Nom</th>
                         <th>Secteur</th>
-                        <th>Ville</th>
+                        <th>Adresse</th>
                         <th>Responsable</th>
                         <th>Contact</th>
                         <th></th>
@@ -100,14 +96,16 @@
                         <tr>
                           <td><strong><c:out value="${entreprise.nom}"/></strong></td>
                           <td class="cell-secondary"><c:out value="${entreprise.secteur}"/></td>
-                          <td class="cell-secondary"><c:out value="${entreprise.ville}"/></td>
-                          <td class="cell-secondary"><c:out value="${entreprise.nomResponsable}"/></td>
-                          <td class="cell-secondary"><c:out value="${entreprise.emailContact}"/></td>
+                          <td class="cell-secondary"><c:out value="${entreprise.adresse}"/></td>
+                          <td class="cell-secondary"><c:out value="${entreprise.representant}"/></td>
+                          <td class="cell-secondary"><c:out value="${entreprise.email}"/>
+                            <c:if test="${not empty entreprise.telephone}"> · <c:out value="${entreprise.telephone}"/></c:if>
+                          </td>
                           <td class="text-right">
                             <form class="inline-form" method="post"
                                   data-confirm="Supprimer cette entreprise ? Attention : les stages associés seront impactés."
                                   action="${pageContext.request.contextPath}/entreprises?action=supprimer">
-                              <input type="hidden" name="entrepriseId" value="<c:out value="${entreprise.id}"/>"/>
+                              <input type="hidden" name="id" value="<c:out value="${entreprise.id}"/>"/>
                               <button type="submit" class="btn btn-danger btn-sm">🗑️ Supprimer</button>
                             </form>
                           </td>

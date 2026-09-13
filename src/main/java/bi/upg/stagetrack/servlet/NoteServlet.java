@@ -4,6 +4,8 @@ import bi.upg.stagetrack.ejb.NoteBean;
 import bi.upg.stagetrack.ejb.RapportStageBean;
 import bi.upg.stagetrack.entity.Note;
 import bi.upg.stagetrack.entity.RapportStage;
+import bi.upg.stagetrack.enums.Role;
+import bi.upg.stagetrack.util.WebUtil;
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,6 +29,7 @@ public class NoteServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         try {
+            if (!WebUtil.exigerRole(req, resp, Role.ADMIN)) return;
             String action = req.getParameter("action") != null ? req.getParameter("action") : "liste";
 
             if ("noter".equals(action)) {
@@ -41,7 +44,7 @@ public class NoteServlet extends HttpServlet {
                 req.getRequestDispatcher("/WEB-INF/views/liste-notes.jsp").forward(req, resp);
             }
         } catch (Exception e) {
-            req.setAttribute("erreur", e.getMessage());
+            req.setAttribute("erreur", WebUtil.messageReel(e));
             req.getRequestDispatcher("/WEB-INF/views/erreur.jsp").forward(req, resp);
         }
     }
@@ -50,6 +53,7 @@ public class NoteServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         try {
+            if (!WebUtil.exigerRole(req, resp, Role.ADMIN)) return;
             long rapportId = Long.parseLong(req.getParameter("rapportId"));
             double noteStage = Double.parseDouble(req.getParameter("noteStage"));
             double noteRapport = Double.parseDouble(req.getParameter("noteRapport"));
@@ -60,7 +64,7 @@ public class NoteServlet extends HttpServlet {
             req.setAttribute("note", note);
             req.getRequestDispatcher("/WEB-INF/views/resultat-note.jsp").forward(req, resp);
         } catch (Exception e) {
-            req.setAttribute("erreur", e.getMessage());
+            req.setAttribute("erreur", WebUtil.messageReel(e));
             req.getRequestDispatcher("/WEB-INF/views/erreur.jsp").forward(req, resp);
         }
     }

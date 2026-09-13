@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="fr">
@@ -36,6 +36,7 @@
           <div class="card-header"><h3 class="card-title">📝 Contenu du rapport</h3></div>
           <div class="card-body">
             <form method="post" action="${pageContext.request.contextPath}/rapports?action=soumettre-etape1">
+              <input type="hidden" name="offreId" value="<c:out value="${offreId}"/>"/>
               <div class="form-group">
                 <label class="form-label">Titre du rapport <span class="required">*</span></label>
                 <input class="form-control" name="titre" required

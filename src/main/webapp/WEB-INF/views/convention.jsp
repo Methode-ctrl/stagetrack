@@ -1,9 +1,9 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <c:set var="pageTitle" value="Ma convention de stage"/>
+  <c:set var="pageTitle" value="Convention de stage"/>
   <%@ include file="include/head.jsp" %>
 </head>
 <body>
@@ -25,7 +25,7 @@
         </div>
 
         <c:choose>
-          <c:when test="${empty offre}">
+          <c:when test="${empty convention}">
             <div class="empty-state">
               <div class="empty-icon">🗂️</div>
               <h3>Aucune convention disponible</h3>
@@ -35,8 +35,8 @@
           <c:otherwise>
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Convention n° <c:out value="${offre.id}"/></h3>
-                <span class="badge badge-<c:out value="${offre.statut}"/>"><c:out value="${offre.statut}"/></span>
+                <h3 class="card-title">Convention n° <c:out value="${convention.id}"/></h3>
+                <span class="badge"><c:out value="${convention.statut}"/></span>
               </div>
               <div class="card-body">
                 <p class="text-secondary">
@@ -46,62 +46,70 @@
 
                 <div class="divider"></div>
 
-                <div class="grid-2">
-                  <div>
-                    <p class="text-muted mb-0">👨‍🎓 Étudiant</p>
-                    <p class="mt-0"><strong><c:out value="${offre.etudiant.prenom}"/> <c:out value="${offre.etudiant.nom}"/></strong></p>
+                <c:if test="${not empty convention.offreStage}">
+                  <div class="grid-2">
+                    <div>
+                      <p class="text-muted mb-0">👨‍🎓 Étudiant</p>
+                      <p class="mt-0"><strong><c:out value="${convention.offreStage.etudiant.utilisateur.prenom}"/> <c:out value="${convention.offreStage.etudiant.utilisateur.nom}"/></strong></p>
+                    </div>
+                    <div>
+                      <p class="text-muted mb-0">🎓 Promotion</p>
+                      <p class="mt-0"><strong><c:out value="${convention.offreStage.etudiant.promotion}"/></strong></p>
+                    </div>
+                    <div>
+                      <p class="text-muted mb-0">🏢 Entreprise d'accueil</p>
+                      <p class="mt-0"><strong><c:out value="${convention.offreStage.entreprise.nom}"/></strong>
+                        <span class="text-secondary">— <c:out value="${convention.offreStage.entreprise.secteur}"/></span></p>
+                    </div>
+                    <div>
+                      <p class="text-muted mb-0">📍 Adresse</p>
+                      <p class="mt-0"><c:out value="${convention.offreStage.entreprise.adresse}"/></p>
+                    </div>
+                    <div>
+                      <p class="text-muted mb-0">🤝 Responsable entreprise</p>
+                      <p class="mt-0"><c:out value="${convention.offreStage.entreprise.representant}"/>
+                        <span class="text-secondary">— <c:out value="${convention.offreStage.entreprise.email}"/></span></p>
+                    </div>
+                    <div>
+                      <p class="text-muted mb-0">👨‍🔬 Superviseur UPG</p>
+                      <p class="mt-0">
+                        <c:choose>
+                          <c:when test="${not empty convention.offreStage.superviseur}">
+                            <strong>Dr. <c:out value="${convention.offreStage.superviseur.utilisateur.prenom}"/> <c:out value="${convention.offreStage.superviseur.utilisateur.nom}"/></strong>
+                          </c:when>
+                          <c:otherwise><span class="text-warning">À déterminer</span></c:otherwise>
+                        </c:choose>
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p class="text-muted mb-0">🎓 Promotion</p>
-                    <p class="mt-0"><strong>BAC3 Génie Logiciel</strong></p>
-                  </div>
-                  <div>
-                    <p class="text-muted mb-0">🏢 Entreprise d'accueil</p>
-                    <p class="mt-0"><strong><c:out value="${offre.entreprise.nom}"/></strong>
-                      <span class="text-secondary">— <c:out value="${offre.entreprise.secteur}"/>, <c:out value="${offre.entreprise.ville}"/></span></p>
-                  </div>
-                  <div>
-                    <p class="text-muted mb-0">📍 Adresse</p>
-                    <p class="mt-0"><c:out value="${offre.entreprise.adresse}"/></p>
-                  </div>
-                  <div>
-                    <p class="text-muted mb-0">🤝 Responsable entreprise</p>
-                    <p class="mt-0"><c:out value="${offre.entreprise.nomResponsable}"/>
-                      <span class="text-secondary">— <c:out value="${offre.entreprise.emailContact}"/></span></p>
-                  </div>
-                  <div>
-                    <p class="text-muted mb-0">👨‍🔬 Superviseur UPG</p>
-                    <p class="mt-0">
-                      <c:choose>
-                        <c:when test="${not empty offre.superviseur}">
-                          <strong>Dr. <c:out value="${offre.superviseur.prenom}"/> <c:out value="${offre.superviseur.nom}"/></strong>
-                        </c:when>
-                        <c:otherwise><span class="text-warning">À déterminer</span></c:otherwise>
-                      </c:choose>
-                    </p>
-                  </div>
-                </div>
 
-                <div class="divider"></div>
+                  <div class="divider"></div>
 
-                <p class="form-label">📄 Objet du stage</p>
-                <p class="mt-0"><strong><c:out value="${offre.intitulePoste}"/></strong></p>
+                  <p class="form-label">📄 Objet du stage</p>
+                  <p class="mt-0"><strong><c:out value="${convention.offreStage.titre}"/></strong></p>
 
-                <c:if test="${not empty offre.description}">
-                  <p class="form-label">📝 Description</p>
-                  <p class="mt-0"><c:out value="${offre.description}"/></p>
+                  <c:if test="${not empty convention.offreStage.description}">
+                    <p class="form-label">📝 Description</p>
+                    <p class="mt-0"><c:out value="${convention.offreStage.description}"/></p>
+                  </c:if>
+
+                  <div class="grid-2 mt-3">
+                    <div>
+                      <p class="text-muted mb-0">🗓️ Date de début</p>
+                      <p class="mt-0"><strong><c:out value="${convention.offreStage.dateDebut}"/></strong></p>
+                    </div>
+                    <div>
+                      <p class="text-muted mb-0">⏱️ Durée</p>
+                      <p class="mt-0"><strong><c:out value="${convention.offreStage.dureeEnMois}"/> mois</strong></p>
+                    </div>
+                  </div>
                 </c:if>
 
-                <div class="grid-2 mt-3">
-                  <div>
-                    <p class="text-muted mb-0">🗓️ Date de début</p>
-                    <p class="mt-0"><strong><c:out value="${offre.dateDebut}"/></strong></p>
-                  </div>
-                  <div>
-                    <p class="text-muted mb-0">⏱️ Durée</p>
-                    <p class="mt-0"><strong><c:out value="${offre.dureeEnMois}"/> mois</strong></p>
-                  </div>
-                </div>
+                <c:if test="${not empty convention.contenu}">
+                  <div class="divider"></div>
+                  <p class="form-label">📄 Contenu de la convention</p>
+                  <p class="mt-0"><c:out value="${convention.contenu}"/></p>
+                </c:if>
 
                 <div class="divider"></div>
 

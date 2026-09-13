@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -20,11 +20,11 @@
 
       <div class="page-content">
         <div class="hero">
-          <h1>Bonjour <span class="hero-gradient"><c:out value="${etudiant.prenom}"/></span> 👋</h1>
+          <h1>Bonjour <span class="hero-gradient"><c:out value="${etudiant.utilisateur.prenom}"/></span> 👋</h1>
           <p>Suivez l'avancement de votre stage — <fmt:formatDate value="<%= new java.util.Date() %>" pattern="EEEE d MMMM yyyy" var="date"/><c:out value="${date}"/></p>
         </div>
 
-        <c:if test="${empty offre}">
+        <c:if test="${empty offres}">
           <div class="card text-center">
             <div class="card-body">
               <div class="empty-state">
@@ -32,7 +32,7 @@
                 <h3>Vous n'avez pas encore de stage</h3>
                 <p>Commencez par soumettre votre offre de stage : l'équipe pédagogique l'examinera.</p>
                 <a class="btn btn-primary btn-lg mt-3"
-                   href="${pageContext.request.contextPath}/offres?action=soumettre">
+                   href="${pageContext.request.contextPath}/offres?action=nouvelle">
                   ➕ Soumettre mon offre de stage
                 </a>
               </div>
@@ -40,7 +40,15 @@
           </div>
         </c:if>
 
-        <c:if test="${not empty offre}">
+        <c:if test="${not empty offres}">
+          <c:if test="${offres.size() > 1}">
+            <div class="alert alert-warning">
+              ℹ️ Vous avez soumis <strong>${offres.size()}</strong> dossier(s). Seul le dernier dossier
+              (celui en haut) est pris en compte pour le déroulement de votre stage.
+            </div>
+          </c:if>
+
+          <c:forEach items="${offres}" var="offre" varStatus="loop">
           <div class="card mb-4">
             <div class="card-header">
               <h3 class="card-title">📁 Mon stage</h3>
@@ -51,18 +59,18 @@
                 <div>
                   <p class="text-muted mb-0">🏢 Entreprise</p>
                   <p class="mt-0"><strong><c:out value="${offre.entreprise.nom}"/></strong>
-                    <span class="text-secondary">— <c:out value="${offre.entreprise.ville}"/></span></p>
+                    <span class="text-secondary">— <c:out value="${offre.entreprise.adresse}"/></span></p>
                 </div>
                 <div>
                   <p class="text-muted mb-0">💼 Poste</p>
-                  <p class="mt-0"><strong><c:out value="${offre.intitulePoste}"/></strong></p>
+                  <p class="mt-0"><strong><c:out value="${offre.titre}"/></strong></p>
                 </div>
                 <div>
                   <p class="text-muted mb-0">👨‍🔬 Superviseur</p>
                   <p class="mt-0">
                     <c:choose>
                       <c:when test="${not empty offre.superviseur}">
-                        <strong>Dr. <c:out value="${offre.superviseur.prenom}"/> <c:out value="${offre.superviseur.nom}"/></strong>
+                        <strong>Dr. <c:out value="${offre.superviseur.utilisateur.prenom}"/> <c:out value="${offre.superviseur.utilisateur.nom}"/></strong>
                       </c:when>
                       <c:otherwise>
                         <span class="text-warning">En attente d'affectation</span>
@@ -103,9 +111,9 @@
                 <c:when test="${offre.statut == 'DOSSIER_INCOMPLET'}">
                   <div class="alert alert-error">
                     ⚠️ Votre dossier nécessite des corrections :
-                    <p class="mt-1"><c:out value="${offre.commentaire}"/></p>
+                    <p class="mt-1"><c:out value="${offre.motifRejet}"/></p>
                   </div>
-                  <a class="btn btn-warning" href="${pageContext.request.contextPath}/offres?action=corriger">
+                  <a class="btn btn-warning" href="${pageContext.request.contextPath}/offres?action=nouvelle">
                     ✏️ Corriger mon dossier
                   </a>
                 </c:when>
@@ -123,7 +131,7 @@
                   <div class="alert alert-success">
                     🚀 Votre stage est officiellement en cours ! À la fin, déposez votre rapport de stage.
                   </div>
-                  <a class="btn btn-primary" href="${pageContext.request.contextPath}/rapports?action=soumettre">
+                  <a class="btn btn-primary" href="${pageContext.request.contextPath}/rapports?action=nouveau&amp;offreId=${offre.id}">
                     📤 Déposer mon rapport de stage
                   </a>
                 </c:when>
@@ -143,9 +151,16 @@
                 <c:when test="${offre.statut == 'EN_CORRECTION'}">
                   <div class="alert alert-error">
                     ⚠️ Votre rapport nécessite des corrections :
-                    <p class="mt-1"><c:out value="${offre.commentaire}"/></p>
+                    <c:choose>
+                      <c:when test="${not empty motifParOffre[offre.id]}">
+                        <p class="mt-1"><c:out value="${motifParOffre[offre.id]}"/></p>
+                      </c:when>
+                      <c:otherwise>
+                        <p class="mt-1 text-secondary">Contactez votre superviseur pour le détail des corrections à apporter.</p>
+                      </c:otherwise>
+                    </c:choose>
                   </div>
-                  <a class="btn btn-warning" href="${pageContext.request.contextPath}/rapports?action=corriger">
+                  <a class="btn btn-warning" href="${pageContext.request.contextPath}/rapports?action=resoumettre&amp;offreId=${offre.id}">
                     ✏️ Corriger mon rapport
                   </a>
                 </c:when>
@@ -161,18 +176,18 @@
                     <p class="text-muted mb-1">🎓 Votre note finale</p>
                     <div class="note-finale-value">
                       <c:choose>
-                        <c:when test="${not empty note}"><c:out value="${note.noteFinale}"/>/20</c:when>
+                        <c:when test="${not empty note}"><c:out value="${notesParOffre[offre.id].noteFinale}"/>/20</c:when>
                         <c:otherwise>…/20</c:otherwise>
                       </c:choose>
                     </div>
                     <p class="mt-2"><strong>
                       <c:choose>
-                        <c:when test="${not empty note}"><c:out value="${note.mention}"/></c:when>
+                        <c:when test="${not empty note}"><c:out value="${notesParOffre[offre.id].mention}"/></c:when>
                         <c:otherwise>En attente</c:otherwise>
                       </c:choose>
                     </strong></p>
                     <p class="text-secondary">
-                      <c:if test="${not empty note.appreciation}">« <c:out value="${note.appreciation}"/> »</c:if>
+                      <c:if test="${not empty note.appreciation}">« <c:out value="${notesParOffre[offre.id].appreciation}"/> »</c:if>
                     </p>
                   </div>
                 </c:when>
@@ -185,13 +200,13 @@
                     <p class="text-muted mb-1">🏅 Note finale</p>
                     <div class="note-finale-value">
                       <c:choose>
-                        <c:when test="${not empty note}"><c:out value="${note.noteFinale}"/>/20</c:when>
+                        <c:when test="${not empty note}"><c:out value="${notesParOffre[offre.id].noteFinale}"/>/20</c:when>
                         <c:otherwise>—</c:otherwise>
                       </c:choose>
                     </div>
                     <p class="mt-2"><strong>
                       <c:choose>
-                        <c:when test="${not empty note}"><c:out value="${note.mention}"/></c:when>
+                        <c:when test="${not empty note}"><c:out value="${notesParOffre[offre.id].mention}"/></c:when>
                         <c:otherwise>—</c:otherwise>
                       </c:choose>
                     </strong></p>
@@ -243,7 +258,7 @@
                 <div class="timeline-label">Archivé</div>
               </div>
             </div>
-          </div>
+          </c:forEach>
         </c:if>
       </div>
     </div>

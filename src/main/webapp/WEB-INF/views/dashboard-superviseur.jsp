@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -40,7 +40,7 @@
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">🎓 Mes étudiants</h3>
-            <span class="badge badge-purple"><c:out value="${offres.size()}"/> dossiers</span>
+            <span class="badge badge-purple"><c:out value="${offres.size()}"/> dossier(s)</span>
           </div>
           <div class="card-body">
             <c:choose>
@@ -66,9 +66,9 @@
                     <tbody>
                       <c:forEach items="${offres}" var="offre">
                         <tr>
-                          <td><strong><c:out value="${offre.etudiant.prenom}"/> <c:out value="${offre.etudiant.nom}"/></strong></td>
+                          <td><strong><c:out value="${offre.etudiant.utilisateur.prenom}"/> <c:out value="${offre.etudiant.utilisateur.nom}"/></strong></td>
                           <td><c:out value="${offre.entreprise.nom}"/></td>
-                          <td class="cell-secondary"><c:out value="${offre.intitulePoste}"/></td>
+                          <td class="cell-secondary"><c:out value="${offre.titre}"/></td>
                           <td><span class="badge badge-<c:out value="${offre.statut}"/>"><c:out value="${offre.statut}"/></span></td>
                           <td class="text-right">
                             <a class="btn btn-secondary btn-sm"

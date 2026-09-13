@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <c:if test="${not empty sessionScope.utilisateur}">
   <c:set var="role" value="${sessionScope.role}"/>
   <aside class="sidebar" id="sidebar">
@@ -69,7 +70,7 @@
         </div>
       </div>
 
-      <a class="nav-logout" href="${pageContext.request.contextPath}/auth?action=logout">
+      <a class="nav-logout" href="${pageContext.request.contextPath}/login?action=logout">
         <span class="nav-icon">🚪</span><span class="nav-text">Se déconnecter</span>
       </a>
     </nav>
