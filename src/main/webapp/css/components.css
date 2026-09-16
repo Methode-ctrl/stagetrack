@@ -15,7 +15,7 @@
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
-  animation: fadeInUp 0.5s ease both;
+  animation: fadeInUp 0.35s ease both;
 }
 
 .stat-card:hover {
@@ -66,6 +66,8 @@
   font-weight: 600;
   letter-spacing: 0.02em;
   white-space: nowrap;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
 }
 
 .badge-OFFRE_SOUMISE     { background: #2D2D4A; color: #9CA3AF; }
@@ -96,6 +98,22 @@
 .badge-role-SUPERVISEUR { background: #1E1B4B; color: #A5B4FC; }
 .badge-role-ETUDIANT    { background: #064E3B; color: #34D399; }
 
+.badge-purple { background: #3B1F6B; color: #C4B5FD; }
+.badge-warning { background: #78350F; color: #FBBF24; }
+.badge-success { background: #064E3B; color: #34D399; }
+.badge-info { background: #1E3A5F; color: #93C5FD; }
+.bg-secondary { background: var(--bg-secondary); color: var(--text-secondary); }
+
+/* Focus clavier visible (accessibilité + pro) */
+.btn:focus-visible,
+a:focus-visible,
+.form-control:focus-visible,
+details summary:focus-visible,
+input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--purple-400);
+  outline-offset: 2px;
+}
+
 /* ============================================================
    BOUTONS
    ============================================================ */
@@ -111,13 +129,25 @@
   font-weight: 600;
   border: none;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease, opacity 0.2s ease;
   line-height: 1.2;
   font-family: inherit;
 }
 
 .btn:active {
-  transform: scale(0.97);
+  transform: scale(0.95);
+}
+
+/* Onde de couleur au clic (ripple) */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(0);
+  animation: ripple-anim 0.45s ease-out forwards;
+  pointer-events: none;
 }
 
 .btn:disabled {
@@ -202,6 +232,12 @@
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  border-color: rgba(139, 92, 246, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
 
 .card-header {
@@ -336,6 +372,11 @@ select.form-control {
   margin-top: 2px;
   accent-color: var(--purple-600);
   cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.form-check input[type="checkbox"]:active {
+  transform: scale(0.88);
 }
 
 .form-check label {
@@ -661,6 +702,69 @@ select.form-control {
 }
 
 /* ============================================================
+   MODALE DE CONFIRMATION
+   ============================================================ */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+  max-width: 420px;
+  width: 100%;
+  transform: scale(0.94);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.open .modal {
+  transform: scale(1);
+}
+
+.modal-header {
+  padding: 22px 24px 0;
+}
+
+.modal-header h3 {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 12px 24px 4px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.modal-actions {
+  padding: 18px 24px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ============================================================
    AUTOCOMPLÈTE / DIVERS
    ============================================================ */
 
@@ -680,6 +784,19 @@ select.form-control {
   color: var(--text-primary);
   font-size: 18px;
   margin-bottom: 8px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  font-size: 14px;
+}
+
+.info-row + .info-row {
+  border-top: 1px solid var(--border-color);
 }
 
 .divider {
@@ -708,7 +825,10 @@ select.form-control {
 .mb-3 { margin-bottom: 24px; }
 .mb-4 { margin-bottom: 32px; }
 
+.w-search { width: 220px; }
+
 .text-center { text-align: center; }
+.text-right { text-align: right; }
 .text-secondary { color: var(--text-secondary); }
 .text-muted { color: var(--text-muted); }
 .text-error { color: #F87171; }
@@ -717,9 +837,45 @@ select.form-control {
 
 .flex { display: flex; }
 .flex-between { display: flex; align-items: center; justify-content: space-between; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; }
 .flex-center { display: flex; align-items: center; justify-content: center; }
 .flex-1 { flex: 1; }
 .flex-wrap { flex-wrap: wrap; }
 .gap-1 { gap: 8px; }
 .gap-2 { gap: 16px; }
 .gap-3 { gap: 24px; }
+
+/* ============================================================
+   ADAPTATION MOBILE
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .steps-indicator .step-label {
+    display: none;
+  }
+
+  .steps-indicator .step-sep {
+    width: 24px;
+    margin: 0 6px;
+  }
+
+  .timeline-step .timeline-dot {
+    width: 36px;
+    height: 36px;
+    font-size: 15px;
+  }
+
+  .timeline::before {
+    top: 18px;
+  }
+
+  .timeline-step .timeline-label {
+    font-size: 10px;
+  }
+
+  .steps-indicator .step-num {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+}

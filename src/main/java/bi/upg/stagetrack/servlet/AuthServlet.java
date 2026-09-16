@@ -1,9 +1,8 @@
 package bi.upg.stagetrack.servlet;
 
+import bi.upg.stagetrack.ejb.GestionBean;
 import bi.upg.stagetrack.entity.Utilisateur;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,13 +11,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/login")
 public class AuthServlet extends HttpServlet {
 
-    @PersistenceContext(unitName = "stagetrack-pu")
-    private EntityManager em;
+    @EJB
+    private GestionBean gestionBean;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -42,25 +42,34 @@ public class AuthServlet extends HttpServlet {
             String email = req.getParameter("email");
             String motDePasse = req.getParameter("motDePasse");
 
-            TypedQuery<Utilisateur> q = em.createQuery(
-                "SELECT u FROM Utilisateur u WHERE u.email = :email", Utilisateur.class);
-            q.setParameter("email", email);
-            List<Utilisateur> resultats = q.getResultList();
-
-            if (resultats.isEmpty() || !resultats.get(0).getMotDePasse().equals(motDePasse)) {
-                req.setAttribute("erreur", "Email ou mot de passe incorrect.");
+            List<String> erreurs = new ArrayList<>();
+            if (email == null || email.isBlank()) {
+                erreurs.add("L'adresse e-mail est obligatoire.");
+            }
+            if (motDePasse == null || motDePasse.isBlank()) {
+                erreurs.add("Le mot de passe est obligatoire.");
+            }
+            if (!erreurs.isEmpty()) {
+                req.setAttribute("erreurs", erreurs);
                 req.getRequestDispatcher("/login.jsp").forward(req, resp);
                 return;
             }
 
-            Utilisateur utilisateur = resultats.get(0);
+            Utilisateur utilisateur = gestionBean.trouverUtilisateurParEmail(email);
+
+            if (utilisateur == null || !utilisateur.getMotDePasse().equals(motDePasse)) {
+                req.setAttribute("erreurs", List.of("Email ou mot de passe incorrect."));
+                req.getRequestDispatcher("/login.jsp").forward(req, resp);
+                return;
+            }
+
             HttpSession session = req.getSession(true);
             session.setAttribute("utilisateur", utilisateur);
             session.setAttribute("role", utilisateur.getRole().name());
 
             resp.sendRedirect(req.getContextPath() + "/dashboard");
         } catch (Exception e) {
-            req.setAttribute("erreur", bi.upg.stagetrack.util.WebUtil.messageReel(e));
+            req.setAttribute("erreurs", List.of(bi.upg.stagetrack.util.WebUtil.messageReel(e)));
             req.getRequestDispatcher("/WEB-INF/views/erreur.jsp").forward(req, resp);
         }
     }

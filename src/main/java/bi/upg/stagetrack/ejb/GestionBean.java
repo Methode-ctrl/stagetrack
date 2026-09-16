@@ -8,7 +8,9 @@ import bi.upg.stagetrack.enums.Role;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Stateless
 public class GestionBean {
@@ -79,5 +81,74 @@ public class GestionBean {
         if (entreprise != null) {
             em.remove(entreprise);
         }
+    }
+
+    public Utilisateur trouverUtilisateurParEmail(String email) {
+        TypedQuery<Utilisateur> q = em.createQuery(
+            "SELECT u FROM Utilisateur u WHERE u.email = :email", Utilisateur.class);
+        q.setParameter("email", email);
+        return q.getResultList().stream().findFirst().orElse(null);
+    }
+
+    public List<Utilisateur> listerUtilisateurs() {
+        return em.createQuery(
+            "SELECT u FROM Utilisateur u ORDER BY u.role, u.nom", Utilisateur.class)
+            .getResultList();
+    }
+
+    public List<Entreprise> listerEntreprises() {
+        return em.createQuery(
+            "SELECT e FROM Entreprise e ORDER BY e.nom", Entreprise.class)
+            .getResultList();
+    }
+
+    public void modifierUtilisateur(Long id, String nom, String prenom, String email, Role role,
+            String matricule, String filiere, String promotion, String grade, String specialite) {
+        Utilisateur utilisateur = em.find(Utilisateur.class, id);
+        if (utilisateur == null) {
+            throw new IllegalArgumentException("Utilisateur introuvable");
+        }
+        utilisateur.setNom(nom);
+        utilisateur.setPrenom(prenom);
+        utilisateur.setEmail(email);
+        utilisateur.setRole(role);
+        em.merge(utilisateur);
+
+        if (Role.ETUDIANT.equals(role)) {
+            Etudiant etudiant = trouverEtudiantParUtilisateur(id);
+            if (etudiant == null) {
+                etudiant = new Etudiant(utilisateur, matricule, filiere, promotion);
+                em.persist(etudiant);
+            } else {
+                etudiant.setMatricule(matricule);
+                etudiant.setFiliere(filiere);
+                etudiant.setPromotion(promotion);
+                em.merge(etudiant);
+            }
+        } else if (Role.SUPERVISEUR.equals(role)) {
+            Superviseur superviseur = trouverSuperviseurParUtilisateur(id);
+            if (superviseur == null) {
+                superviseur = new Superviseur(utilisateur, grade, specialite);
+                em.persist(superviseur);
+            } else {
+                superviseur.setGrade(grade);
+                superviseur.setSpecialite(specialite);
+                em.merge(superviseur);
+            }
+        }
+    }
+
+    private Etudiant trouverEtudiantParUtilisateur(Long utilisateurId) {
+        TypedQuery<Etudiant> q = em.createQuery(
+            "SELECT e FROM Etudiant e WHERE e.utilisateur.id = :uid", Etudiant.class);
+        q.setParameter("uid", utilisateurId);
+        return q.getResultList().stream().findFirst().orElse(null);
+    }
+
+    private Superviseur trouverSuperviseurParUtilisateur(Long utilisateurId) {
+        TypedQuery<Superviseur> q = em.createQuery(
+            "SELECT s FROM Superviseur s WHERE s.utilisateur.id = :uid", Superviseur.class);
+        q.setParameter("uid", utilisateurId);
+        return q.getResultList().stream().findFirst().orElse(null);
     }
 }

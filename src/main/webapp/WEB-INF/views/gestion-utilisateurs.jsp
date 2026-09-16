@@ -22,11 +22,56 @@
           <p>Créez des comptes et gérez leurs accès.</p>
         </div>
 
+        <c:if test="${not empty erreurs}">
+          <div class="alert alert-error">
+            <c:forEach items="${erreurs}" var="err"><p class="mb-1"><c:out value="${err}"/></p></c:forEach>
+          </div>
+        </c:if>
         <c:if test="${not empty erreur}">
-          <div class="alert alert-error">${erreur}</div>
+          <div class="alert alert-error"><c:out value="${erreur}"/></div>
         </c:if>
         <c:if test="${not empty succes}">
-          <div class="alert alert-success">${succes}</div>
+          <div class="alert alert-success"><c:out value="${succes}"/></div>
+        </c:if>
+
+        <c:if test="${not empty utilisateurModif}">
+          <div class="card mb-4">
+            <div class="card-header"><h3 class="card-title">Modifier : <c:out value="${utilisateurModif.prenom}"/> <c:out value="${utilisateurModif.nom}"/></h3></div>
+            <div class="card-body">
+              <form method="post" action="${pageContext.request.contextPath}/utilisateurs?action=modifier">
+                <input type="hidden" name="id" value="<c:out value="${utilisateurModif.id}"/>"/>
+                <div class="grid-2">
+                  <div class="form-group">
+                    <label class="form-label">Prénom <span class="required">*</span></label>
+                    <input class="form-control" name="prenom" required
+                           value="<c:out value="${utilisateurModif.prenom}"/>"/>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nom <span class="required">*</span></label>
+                    <input class="form-control" name="nom" required
+                           value="<c:out value="${utilisateurModif.nom}"/>"/>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">E-mail <span class="required">*</span></label>
+                    <input class="form-control" type="email" name="email" required
+                           value="<c:out value="${utilisateurModif.email}"/>"/>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Rôle <span class="required">*</span></label>
+                    <select class="form-control" name="role" required>
+                      <option value="ETUDIANT" <c:if test="${utilisateurModif.role == 'ETUDIANT'}">selected</c:if>>Étudiant</option>
+                      <option value="SUPERVISEUR" <c:if test="${utilisateurModif.role == 'SUPERVISEUR'}">selected</c:if>>Superviseur</option>
+                      <option value="ADMIN" <c:if test="${utilisateurModif.role == 'ADMIN'}">selected</c:if>>Administrateur</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="inline-flex gap-2 mt-2">
+                  <button type="submit" class="btn btn-primary">Enregistrer</button>
+                  <a class="btn btn-secondary" href="${pageContext.request.contextPath}/utilisateurs">Annuler</a>
+                </div>
+              </form>
+            </div>
+          </div>
         </c:if>
 
         <div class="card mb-4">
@@ -124,11 +169,15 @@
                           <td>
                             <c:if test="${user.role != 'ADMIN' || sessionScope.utilisateur.id != user.id}">
                               <div class="inline-flex gap-1">
+                                <a class="btn btn-secondary btn-sm"
+                                   href="${pageContext.request.contextPath}/utilisateurs?action=modifier&amp;id=${user.id}">
+                                   Modifier
+                                </a>
                                 <form class="inline-form" method="post"
                                       data-confirm="Supprimer définitivement cet utilisateur ?"
                                       action="${pageContext.request.contextPath}/utilisateurs?action=supprimer">
                                   <input type="hidden" name="id" value="<c:out value="${user.id}"/>"/>
-                                  <button type="submit" class="btn btn-danger btn-sm">🗑️ Supprimer</button>
+                                  <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
                                 </form>
                               </div>
                             </c:if>

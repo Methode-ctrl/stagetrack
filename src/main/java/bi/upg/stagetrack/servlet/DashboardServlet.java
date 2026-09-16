@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,7 @@ public class DashboardServlet extends HttpServlet {
             Utilisateur utilisateur = (Utilisateur) session.getAttribute("utilisateur");
             String path = req.getPathInfo();
             Role role = utilisateur.getRole();
+            req.setAttribute("dateJour", new Date());
 
             if (path == null || "/".equals(path)) {
                 switch (role) {

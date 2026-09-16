@@ -17,7 +17,7 @@
         <div class="topbar-spacer"></div>
       </div>
 
-      <div class="page-content" style="max-width:560px; margin:0 auto;">
+      <div class="page-content page-content-xs">
         <div class="card">
           <div class="card-body text-center" style="padding:48px;">
             <div style="font-size:64px;">🔒</div>

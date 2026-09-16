@@ -52,7 +52,7 @@
                       </td>
                       <td class="cell-secondary"><c:out value="${conv.offreStage.entreprise.nom}"/></td>
                       <td class="cell-secondary"><c:out value="${conv.offreStage.titre}"/></td>
-                      <td><span class="badge bg-secondary"><c:out value="${conv.statut}"/></span></td>
+                      <td><span class="badge"><c:out value="${conv.statut}"/></span></td>
                       <td class="text-right">
                         <a class="btn btn-secondary btn-sm"
                            href="${pageContext.request.contextPath}/conventions?action=detail&amp;id=${conv.id}">

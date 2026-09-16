@@ -24,10 +24,26 @@
         <div class="topbar-actions">
           <c:if test="${sessionScope.role == 'ETUDIANT'}">
             <a class="btn btn-primary btn-sm"
-               href="${pageContext.request.contextPath}/offres?action=nouvelle">＋ Déposer une demande</a>
+               href="${pageContext.request.contextPath}/offres?action=nouvelle">+ Déposer une demande</a>
           </c:if>
-          <input class="form-control" id="filtreRecherche" type="search"
-                 placeholder="🔎 Rechercher…" style="width:220px;"/>
+          <c:if test="${sessionScope.role != 'ETUDIANT'}">
+            <select class="form-control" id="filtreStatut" style="width:auto;"
+                    onchange="var f=new URLSearchParams(window.location.search); f.set('statut', this.value); f.delete('page'); window.location.search=f.toString();">
+              <option value="">Tous les statuts</option>
+              <option value="OFFRE_SOUMISE" <c:if test="${statutSelectionne == 'OFFRE_SOUMISE'}">selected</c:if>>Offre soumise</option>
+              <option value="EN_VALIDATION" <c:if test="${statutSelectionne == 'EN_VALIDATION'}">selected</c:if>>En validation</option>
+              <option value="VALIDEE" <c:if test="${statutSelectionne == 'VALIDEE'}">selected</c:if>>Validée</option>
+              <option value="STAGE_EN_COURS" <c:if test="${statutSelectionne == 'STAGE_EN_COURS'}">selected</c:if>>Stage en cours</option>
+              <option value="PAUSE" <c:if test="${statutSelectionne == 'PAUSE'}">selected</c:if>>En pause</option>
+              <option value="RAPPORT_SOUMIS" <c:if test="${statutSelectionne == 'RAPPORT_SOUMIS'}">selected</c:if>>Rapport soumis</option>
+              <option value="EN_CORRECTION" <c:if test="${statutSelectionne == 'EN_CORRECTION'}">selected</c:if>>En correction</option>
+              <option value="RAPPORT_VALIDE" <c:if test="${statutSelectionne == 'RAPPORT_VALIDE'}">selected</c:if>>Rapport validé</option>
+              <option value="NOTE_ATTRIBUEE" <c:if test="${statutSelectionne == 'NOTE_ATTRIBUEE'}">selected</c:if>>Noté</option>
+              <option value="ARCHIVE" <c:if test="${statutSelectionne == 'ARCHIVE'}">selected</c:if>>Archivé</option>
+            </select>
+          </c:if>
+          <input class="form-control w-search" id="filtreRecherche" type="search"
+                 placeholder="Rechercher…"/>
         </div>
       </div>
 
@@ -100,6 +116,29 @@
                 </tbody>
               </table>
             </div>
+            <c:if test="${totalPages > 1}">
+              <div class="card-footer text-center mt-3">
+                <span class="text-secondary">
+                  Affichage de <c:out value="${(page - 1) * taillePage + 1}"/> à
+                  <c:out value="${page * taillePage > total ? total : page * taillePage}"/> sur
+                  <c:out value="${total}"/> dossier(s)
+                </span>
+                <div class="inline-flex gap-1 mt-2">
+                  <c:forEach begin="1" end="${totalPages}" var="p">
+                    <c:url var="urlPage" value="/offres">
+                      <c:param name="page" value="${p}"/>
+                      <c:if test="${not empty statutSelectionne}">
+                        <c:param name="statut" value="${statutSelectionne}"/>
+                      </c:if>
+                    </c:url>
+                    <a class="btn btn-sm <c:choose><c:when test="${p == page}">btn-primary</c:when><c:otherwise>btn-secondary</c:otherwise></c:choose>"
+                       href="<c:out value="${urlPage}"/>">
+                      <c:out value="${p}"/>
+                    </a>
+                  </c:forEach>
+                </div>
+              </div>
+            </c:if>
           </c:otherwise>
         </c:choose>
       </div>

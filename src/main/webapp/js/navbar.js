@@ -60,8 +60,25 @@
   onScroll();
 
   /* ---------- 3. Lien actif selon l'URL courante ---------- */
+  var curPath = window.location.pathname;
+  var curSearch = window.location.search;
+
   document.querySelectorAll('.nav-link').forEach(function (link) {
-    if (link.href === window.location.href) {
+    var linkPath = link.pathname;
+    var linkSearch = link.search || '';
+
+    if (linkPath !== curPath) {
+      return;
+    }
+
+    if (!linkSearch || !curSearch) {
+      link.classList.add('active');
+      return;
+    }
+
+    var linkBase = linkSearch.toLowerCase().split('&')[0];
+    var curBase = curSearch.toLowerCase().split('&')[0];
+    if (linkBase === curBase) {
       link.classList.add('active');
     }
   });

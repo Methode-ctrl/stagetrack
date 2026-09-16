@@ -23,8 +23,13 @@
           <p>Associez un superviseur UPG aux dossiers sans encadrement.</p>
         </div>
 
+        <c:if test="${not empty erreurs}">
+          <div class="alert alert-error">
+            <c:forEach items="${erreurs}" var="err"><p class="mb-1"><c:out value="${err}"/></p></c:forEach>
+          </div>
+        </c:if>
         <c:if test="${not empty erreur}">
-          <div class="alert alert-error">${erreur}</div>
+          <div class="alert alert-error"><c:out value="${erreur}"/></div>
         </c:if>
 
         <c:choose>

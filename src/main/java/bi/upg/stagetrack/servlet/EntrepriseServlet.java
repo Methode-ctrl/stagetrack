@@ -5,8 +5,6 @@ import bi.upg.stagetrack.entity.Entreprise;
 import bi.upg.stagetrack.enums.Role;
 import bi.upg.stagetrack.util.WebUtil;
 import jakarta.ejb.EJB;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,9 +17,6 @@ import java.util.List;
 @WebServlet("/entreprises")
 public class EntrepriseServlet extends HttpServlet {
 
-    @PersistenceContext(unitName = "stagetrack-pu")
-    private EntityManager em;
-
     @EJB
     private GestionBean gestionBean;
 
@@ -30,13 +25,11 @@ public class EntrepriseServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             if (!WebUtil.exigerRole(req, resp, Role.ADMIN)) return;
-            List<Entreprise> entreprises = em.createQuery(
-                    "SELECT e FROM Entreprise e ORDER BY e.nom", Entreprise.class)
-                    .getResultList();
+            List<Entreprise> entreprises = gestionBean.listerEntreprises();
             req.setAttribute("entreprises", entreprises);
             req.getRequestDispatcher("/WEB-INF/views/gestion-entreprises.jsp").forward(req, resp);
         } catch (Exception e) {
-            req.setAttribute("erreur", WebUtil.messageReel(e));
+            req.setAttribute("erreurs", List.of(WebUtil.messageReel(e)));
             req.getRequestDispatcher("/WEB-INF/views/erreur.jsp").forward(req, resp);
         }
     }
@@ -79,7 +72,7 @@ public class EntrepriseServlet extends HttpServlet {
             }
             resp.sendRedirect(req.getContextPath() + "/entreprises");
         } catch (Exception e) {
-            req.setAttribute("erreur", WebUtil.messageReel(e));
+            req.setAttribute("erreurs", List.of(WebUtil.messageReel(e)));
             req.getRequestDispatcher("/WEB-INF/views/erreur.jsp").forward(req, resp);
         }
     }

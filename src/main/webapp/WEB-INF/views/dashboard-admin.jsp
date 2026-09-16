@@ -25,7 +25,7 @@
       <div class="page-content">
         <div class="hero">
           <h1>Bonjour <span class="hero-gradient"><c:out value="${sessionScope.utilisateur.prenom}"/></span> 👋</h1>
-          <p>Voici l'état du suivi des stages — <fmt:formatDate value="<%= new java.util.Date() %>" pattern="EEEE d MMMM yyyy" var="date"/><c:out value="${date}"/></p>
+          <p>Voici l'état du suivi des stages — <fmt:formatDate value="${dateJour}" pattern="EEEE d MMMM yyyy" var="date"/><c:out value="${date}"/></p>
         </div>
 
         <div class="stats-grid">

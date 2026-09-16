@@ -61,16 +61,70 @@
     majCompteur();
   }
 
-  /* ---------- 3. Confirmation avant suppression ---------- */
-  function confirmerSuppression(message) {
-    return confirm(message || 'Confirmer la suppression ?');
+  /* ---------- 3. Confirmation avant suppression (modale) ---------- */
+  var confirmerOverlay = null;
+  var callbackConfirmation = null;
+
+  function ouvrirConfirmation(message, callback) {
+    callbackConfirmation = callback;
+
+    if (!confirmerOverlay) {
+      confirmerOverlay = document.createElement('div');
+      confirmerOverlay.className = 'modal-overlay';
+      confirmerOverlay.innerHTML =
+        '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="stConfirmTitle">' +
+          '<div class="modal-header"><h3 id="stConfirmTitle">⚠️ Confirmation</h3></div>' +
+          '<div class="modal-body"><p id="stConfirmMsg"></p></div>' +
+          '<div class="modal-actions">' +
+            '<button type="button" class="btn btn-secondary" data-confirm-action="cancel">Annuler</button>' +
+            '<button type="button" class="btn btn-danger" data-confirm-action="ok">Confirmer</button>' +
+          '</div>' +
+        '</div>';
+      document.body.appendChild(confirmerOverlay);
+
+      confirmerOverlay.addEventListener('click', function (event) {
+        var bouton = event.target.closest('[data-confirm-action]');
+        if (bouton) {
+          var ok = bouton.getAttribute('data-confirm-action') === 'ok';
+          var cb = callbackConfirmation;
+          fermerConfirmation();
+          if (ok && cb) {
+            cb();
+          }
+        }
+      });
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && confirmerOverlay.classList.contains('open')) {
+          fermerConfirmation();
+        }
+      });
+    }
+
+    var msg = confirmerOverlay.querySelector('#stConfirmMsg');
+    msg.textContent = message;
+    confirmerOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function fermerConfirmation() {
+    if (confirmerOverlay) {
+      confirmerOverlay.classList.remove('open');
+    }
+    document.body.style.overflow = '';
   }
 
   document.querySelectorAll('form[data-confirm]').forEach(function (form) {
     form.addEventListener('submit', function (event) {
-      if (!confirmerSuppression(form.getAttribute('data-confirm'))) {
-        event.preventDefault();
+      var message = form.getAttribute('data-confirm');
+      if (!message) {
+        return;
       }
+      event.preventDefault();
+      ouvrirConfirmation(message, function () {
+        form.removeAttribute('data-confirm');
+        form.submit();
+      });
     });
   });
 
@@ -84,7 +138,30 @@
     });
   });
 
+  /* ---------- 5. Retour visuel des boutons (onde de couleur) ---------- */
+  document.querySelectorAll('.btn').forEach(function (btn) {
+    btn.addEventListener('pointerdown', function (event) {
+      if (event.button !== undefined && event.button !== 0) {
+        return;
+      }
+      var rect = btn.getBoundingClientRect();
+      var d = Math.max(rect.width, rect.height);
+      var ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      ripple.style.width = d + 'px';
+      ripple.style.height = d + 'px';
+      ripple.style.left = (event.clientX - rect.left - d / 2) + 'px';
+      ripple.style.top = (event.clientY - rect.top - d / 2) + 'px';
+      btn.appendChild(ripple);
+      setTimeout(function () {
+        if (ripple.parentNode) {
+          ripple.parentNode.removeChild(ripple);
+        }
+      }, 500);
+    });
+  });
+
   window.StageTrack = window.StageTrack || {};
   window.StageTrack.calculerNote = calculerNote;
-  window.StageTrack.confirmerSuppression = confirmerSuppression;
+  window.StageTrack.ouvrirConfirmation = ouvrirConfirmation;
 })();

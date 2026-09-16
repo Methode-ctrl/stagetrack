@@ -56,12 +56,6 @@
         </c:if>
       </div>
 
-      <div class="card-upgrade">
-        <h4>Projet UPG 🔒</h4>
-        <p>StageTrack BAC3 · Génie Logiciel 2026</p>
-        <button type="button" class="btn">Version 1.0</button>
-      </div>
-
       <div class="navbar-user">
         <div class="user-avatar"><c:out value="${sessionScope.utilisateur.prenom.charAt(0)}"/></div>
         <div class="flex-1" style="min-width:0;">

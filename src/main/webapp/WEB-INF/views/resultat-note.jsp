@@ -17,7 +17,7 @@
         <a class="btn btn-secondary btn-sm" href="${pageContext.request.contextPath}/notes">← Retour</a>
       </div>
 
-      <div class="page-content" style="max-width:700px; margin:0 auto;">
+      <div class="page-content page-content-sm">
         <div class="hero text-center">
           <div style="font-size:48px;">🏅</div>
           <h1><span class="hero-gradient">Note attribuée</span></h1>

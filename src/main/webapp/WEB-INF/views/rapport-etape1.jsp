@@ -17,7 +17,7 @@
         <a class="btn btn-secondary btn-sm" href="javascript:history.back()">← Annuler</a>
       </div>
 
-      <div class="page-content" style="max-width:720px; margin:0 auto;">
+      <div class="page-content page-content-sm">
         <div class="steps-indicator">
           <div class="step-item active">
             <div class="step-num">1</div><span class="step-label">Contenu</span>
@@ -28,8 +28,13 @@
           </div>
         </div>
 
+        <c:if test="${not empty erreurs}">
+          <div class="alert alert-error">
+            <c:forEach items="${erreurs}" var="err"><p class="mb-1"><c:out value="${err}"/></p></c:forEach>
+          </div>
+        </c:if>
         <c:if test="${not empty erreur}">
-          <div class="alert alert-error">${erreur}</div>
+          <div class="alert alert-error"><c:out value="${erreur}"/></div>
         </c:if>
 
         <div class="card">

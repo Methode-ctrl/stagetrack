@@ -126,6 +126,10 @@ public class OffreStageBean {
                  .getResultList();
     }
 
+    public OffreStage trouverOffre(Long id) {
+        return em.find(OffreStage.class, id);
+    }
+
     public List<OffreStage> listerParSuperviseur(Superviseur superviseur) {
         TypedQuery<OffreStage> q = em.createQuery(
             "SELECT o FROM OffreStage o WHERE o.superviseur = :sup ORDER BY o.dateSoumission DESC", OffreStage.class);
@@ -153,5 +157,26 @@ public class OffreStageBean {
 
     public Entreprise trouverEntreprise(Long id) {
         return em.find(Entreprise.class, id);
+    }
+
+    public void ajouterPieceJointe(OffreStage offre, PieceJointe piece) {
+        piece.setOffreStage(offre);
+        piece.setDateAjout(LocalDateTime.now());
+        em.persist(piece);
+    }
+
+    public Convention trouverConventionParOffre(Long offreId) {
+        TypedQuery<Convention> q = em.createQuery(
+            "SELECT c FROM Convention c WHERE c.offreStage.id = :oid", Convention.class);
+        q.setParameter("oid", offreId);
+        return q.getResultList().stream().findFirst().orElse(null);
+    }
+
+    public List<OffreStage> listerSansConvention() {
+        TypedQuery<OffreStage> q = em.createQuery(
+            "SELECT o FROM OffreStage o WHERE o.convention IS NULL "
+            + "AND o.statut IN :valides ORDER BY o.dateSoumission DESC", OffreStage.class);
+        q.setParameter("valides", java.util.List.of(StatutOffre.VALIDEE, StatutOffre.STAGE_EN_COURS));
+        return q.getResultList();
     }
 }

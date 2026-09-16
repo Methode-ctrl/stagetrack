@@ -17,7 +17,7 @@
         <a class="btn btn-secondary btn-sm" href="javascript:history.back()">← Retour</a>
       </div>
 
-      <div class="page-content" style="max-width:860px; margin:0 auto;">
+      <div class="page-content page-content-md">
         <div class="hero text-center">
           <div style="font-size:40px;">📑</div>
           <h1><span class="hero-gradient">Convention de stage</span></h1>

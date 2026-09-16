@@ -17,14 +17,19 @@
         <a class="btn btn-secondary btn-sm" href="javascript:history.back()">← Retour</a>
       </div>
 
-      <div class="page-content" style="max-width:760px; margin:0 auto;">
+      <div class="page-content page-content-md">
         <div class="hero">
           <h1>🏅 <span class="hero-gradient">Attribuer la note finale</span></h1>
           <p>Rapport : <c:out value="${rapport.titre}"/></p>
         </div>
 
+        <c:if test="${not empty erreurs}">
+          <div class="alert alert-error">
+            <c:forEach items="${erreurs}" var="err"><p class="mb-1"><c:out value="${err}"/></p></c:forEach>
+          </div>
+        </c:if>
         <c:if test="${not empty erreur}">
-          <div class="alert alert-error">${erreur}</div>
+          <div class="alert alert-error"><c:out value="${erreur}"/></div>
         </c:if>
 
         <div class="card mb-4">
