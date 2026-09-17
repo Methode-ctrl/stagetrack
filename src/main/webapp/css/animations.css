@@ -13,6 +13,37 @@
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 @keyframes ripple-anim {
   to {
     transform: scale(4);
@@ -35,19 +66,35 @@
   }
 }
 
+/* Classes d'animation utilitaires */
+.fade-in       { animation: fadeIn 0.4s ease both; }
+.fade-in-up    { animation: fadeInUp 0.35s ease both; }
+.slide-in-left { animation: slideInLeft 0.35s ease both; }
+.scale-in      { animation: scaleIn 0.3s ease both; }
+
 /* Délais en cascade sur les cartes stats */
 .stat-card:nth-child(1) { animation-delay: 0.05s; }
 .stat-card:nth-child(2) { animation-delay: 0.1s; }
 .stat-card:nth-child(3) { animation-delay: 0.15s; }
 .stat-card:nth-child(4) { animation-delay: 0.2s; }
+.stat-card:nth-child(5) { animation-delay: 0.25s; }
+.stat-card:nth-child(6) { animation-delay: 0.3s; }
 
-/* Délais sur les éléments de timeline */
+/* Délais en cascade sur les éléments de timeline */
 .timeline-step:nth-child(1) { animation: fadeInUp 0.35s 0.05s ease both; }
 .timeline-step:nth-child(2) { animation: fadeInUp 0.35s 0.1s ease both; }
 .timeline-step:nth-child(3) { animation: fadeInUp 0.35s 0.15s ease both; }
 .timeline-step:nth-child(4) { animation: fadeInUp 0.35s 0.2s ease both; }
 .timeline-step:nth-child(5) { animation: fadeInUp 0.35s 0.25s ease both; }
 .timeline-step:nth-child(6) { animation: fadeInUp 0.35s 0.3s ease both; }
+
+/* Délais en cascade sur les éléments de liste */
+.order-item:nth-child(1) { animation: fadeInUp 0.35s 0.05s ease both; }
+.order-item:nth-child(2) { animation: fadeInUp 0.35s 0.1s ease both; }
+.order-item:nth-child(3) { animation: fadeInUp 0.35s 0.15s ease both; }
+.order-item:nth-child(4) { animation: fadeInUp 0.35s 0.2s ease both; }
+.order-item:nth-child(5) { animation: fadeInUp 0.35s 0.25s ease both; }
+.order-item:nth-child(6) { animation: fadeInUp 0.35s 0.3s ease both; }
 
 /* Effet shimmer sur les lignes du tableau au chargement (utile aux spinners) */
 .shimmer {

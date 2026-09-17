@@ -1,0 +1,222 @@
+/* ============================================================
+   STAGETRACK — THEME.CSS
+   Bouton de bascule sombre / clair + ajustements thème clair
+   ============================================================ */
+
+/* ---------- Bouton de bascule ---------- */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease,
+              border-color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--purple-500);
+  color: var(--purple-400);
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.2);
+}
+
+.theme-toggle:active {
+  transform: scale(0.92);
+}
+
+.theme-toggle svg {
+  width: 19px;
+  height: 19px;
+}
+
+.theme-toggle--floating {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 1000;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="light"] .theme-toggle--floating {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* ============================================================
+   THÈME CLAIR — composants à couleurs codées en dur
+   ============================================================ */
+
+[data-theme="light"] .card {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .modal {
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.25);
+}
+
+/* Carte note finale */
+[data-theme="light"] .note-finale-card {
+  background: linear-gradient(135deg, #FFFFFF, #EDE9FE);
+  border-color: var(--purple-400);
+  box-shadow: 0 12px 40px rgba(124, 58, 237, 0.15);
+}
+
+[data-theme="light"] .note-finale-value {
+  background: linear-gradient(135deg, var(--purple-600), var(--purple-500));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Badges de statut */
+[data-theme="light"] .badge-OFFRE_SOUMISE     { background: #E5E7EB; color: #4B5563; }
+[data-theme="light"] .badge-EN_VALIDATION     { background: #DBEAFE; color: #1D4ED8; }
+[data-theme="light"] .badge-DOSSIER_INCOMPLET { background: #FEF3C7; color: #B45309; }
+[data-theme="light"] .badge-VALIDEE           { background: #D1FAE5; color: #047857; }
+[data-theme="light"] .badge-STAGE_EN_COURS    { background: #D1FAE5; color: #059669; }
+[data-theme="light"] .badge-PAUSE             { background: #FEE2E2; color: #B91C1C; }
+[data-theme="light"] .badge-RAPPORT_SOUMIS    { background: #EDE9FE; color: #6D28D9; }
+[data-theme="light"] .badge-EN_CORRECTION     { background: #FFEDD5; color: #C2410C; }
+[data-theme="light"] .badge-RAPPORT_VALIDE    { background: #CFFAFE; color: #0E7490; }
+[data-theme="light"] .badge-NOTE_ATTRIBUEE    { background: #FEF9C3; color: #A16207; }
+[data-theme="light"] .badge-ARCHIVE           { background: #E5E7EB; color: #6B7280; }
+
+/* Badges de rôle */
+[data-theme="light"] .badge-role-ADMIN       { background: #EDE9FE; color: #6D28D9; }
+[data-theme="light"] .badge-role-SUPERVISEUR { background: #E0E7FF; color: #4338CA; }
+[data-theme="light"] .badge-role-ETUDIANT    { background: #D1FAE5; color: #047857; }
+
+[data-theme="light"] .badge-purple  { background: #EDE9FE; color: #6D28D9; }
+[data-theme="light"] .badge-warning { background: #FEF3C7; color: #B45309; }
+[data-theme="light"] .badge-success { background: #D1FAE5; color: #047857; }
+[data-theme="light"] .badge-info    { background: #DBEAFE; color: #1D4ED8; }
+
+/* Alertes */
+[data-theme="light"] .alert-success { background: #D1FAE5; color: #065F46; border-color: rgba(16, 185, 129, 0.35); }
+[data-theme="light"] .alert-error   { background: #FEE2E2; color: #991B1B; border-color: rgba(239, 68, 68, 0.35); }
+[data-theme="light"] .alert-warning { background: #FEF3C7; color: #92400E; border-color: rgba(245, 158, 11, 0.35); }
+[data-theme="light"] .alert-info    { background: #DBEAFE; color: #1E40AF; border-color: rgba(96, 165, 250, 0.35); }
+
+/* Étapes / timeline terminées */
+[data-theme="light"] .timeline-step.done .timeline-label,
+[data-theme="light"] .steps-indicator .step-item.done .step-label {
+  color: #059669;
+}
+
+/* Champs erreur */
+[data-theme="light"] .form-error,
+[data-theme="light"] .form-label .required {
+  color: #DC2626;
+}
+
+/* Utilitaires texte */
+[data-theme="light"] .text-error { color: #DC2626; }
+[data-theme="light"] .text-success { color: #059669; }
+[data-theme="light"] .text-warning { color: #B45309; }
+
+/* ============================================================
+   THÈME CLAIR — surfaces colorées (texte blanc conservé)
+   ============================================================ */
+
+[data-theme="light"] .btn-primary,
+[data-theme="light"] .btn-success,
+[data-theme="light"] .btn-warning,
+[data-theme="light"] .btn-danger,
+[data-theme="light"] .stat-card,
+[data-theme="light"] .nav-badge,
+[data-theme="light"] .navbar-user .user-avatar,
+[data-theme="light"] .order-item .order-avatar,
+[data-theme="light"] .timeline-step.active .timeline-dot,
+[data-theme="light"] .timeline-step.done .timeline-dot,
+[data-theme="light"] .steps-indicator .step-item.active .step-num,
+[data-theme="light"] .steps-indicator .step-item.done .step-num,
+[data-theme="light"] .step.step-active .step-dot {
+  color: #FFFFFF;
+}
+
+[data-theme="light"] .stat-card {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="light"] .stat-card:hover {
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.18);
+}
+
+[data-theme="light"] .nav-logout {
+  color: #DC2626;
+}
+
+[data-theme="light"] .nav-logout:hover {
+  color: #B91C1C;
+}
+
+/* Mention de la note finale (résultat de notation) */
+.badge-mention { background: #064E3B; color: #34D399; }
+[data-theme="light"] .badge-mention { background: #D1FAE5; color: #047857; }
+
+/* ============================================================
+   THÈME CLAIR — page de connexion
+   ============================================================ */
+
+[data-theme="light"] .login-page {
+  background:
+    radial-gradient(circle at 20% 10%, rgba(124, 58, 237, 0.1), transparent 40%),
+    radial-gradient(circle at 90% 90%, rgba(139, 92, 246, 0.08), transparent 45%),
+    var(--bg-primary);
+}
+
+[data-theme="light"] .login-card {
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.12);
+}
+
+/* ============================================================
+   THÈME CLAIR — derniers détails (tout élément restant)
+   ============================================================ */
+
+/* En-têtes de tableau plus contrastés en clair */
+[data-theme="light"] .table th {
+  background: #EEEEF8;
+  color: #475569;
+}
+
+/* Barre de défilement discrète en clair */
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #D3D9E6;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--purple-500);
+}
+
+/* Mot de passe / icônes de champs */
+[data-theme="light"] .login-password-toggle:hover {
+  background: var(--bg-hover);
+}
+
+/* Carte de note finale : bordure profonde en clair */
+[data-theme="light"] .note-finale-card {
+  border-color: var(--purple-600);
+}
+
+/* Liste de dossiers : survol plus doux en clair */
+[data-theme="light"] .order-item:hover {
+  background: #FFFFFF;
+}
+
+/* Sélection cohérente dans les deux thèmes */
+[data-theme="light"] ::selection {
+  background: var(--purple-600);
+  color: #FFFFFF;
+}

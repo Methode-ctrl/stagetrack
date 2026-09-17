@@ -182,6 +182,38 @@ INSERT INTO rapport_stage (titre, statut, offre_stage_id) VALUES
 ('Rapport de stage - Développement Full Stack chez BurundAI Tech', 'VALIDE', 1);
 
 -- Note
+-- =====================================================
+-- MIGRATION
+-- Garantit que la contrainte CHECK sur offre_stage.statut
+-- contient bien les 11 statuts. Nécessaire si la table a
+-- été créée par une version antérieure du script, car
+-- "CREATE TABLE IF NOT EXISTS" ne met pas à jour la
+-- contrainte existante (sinon : erreur au démarrage d'un
+-- stage -> statut STAGE_EN_COURS refusé par PostgreSQL).
+-- Bloc idempotent : peut être exécuté plusieurs fois.
+-- =====================================================
+DO $$
+DECLARE
+    c record;
+BEGIN
+    FOR c IN
+        SELECT conname
+        FROM pg_constraint
+        WHERE conrelid = 'offre_stage'::regclass
+          AND contype = 'c'
+          AND pg_get_constraintdef(oid) ILIKE '%statut%'
+    LOOP
+        EXECUTE 'ALTER TABLE offre_stage DROP CONSTRAINT ' || quote_ident(c.conname);
+    END LOOP;
+
+    ALTER TABLE offre_stage
+        ADD CONSTRAINT offre_stage_statut_check CHECK (statut IN (
+            'OFFRE_SOUMISE', 'EN_VALIDATION', 'DOSSIER_INCOMPLET', 'VALIDEE',
+            'STAGE_EN_COURS', 'PAUSE', 'RAPPORT_SOUMIS', 'EN_CORRECTION',
+            'RAPPORT_VALIDE', 'NOTE_ATTRIBUEE', 'ARCHIVE'
+        ));
+END $$;
+
 INSERT INTO note (rapport_stage_id, note_stage, note_rapport, note_presence, note_finale, mention, appreciation) VALUES
 (1, 16.5, 17.0, 18.0, 17.0, 'Bien', 'Excellent travail de développement. Bonne maîtrise des technologies web.');
 

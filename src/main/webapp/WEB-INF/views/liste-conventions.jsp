@@ -22,6 +22,12 @@
           <p>Consultez les conventions générées pour chaque dossier.</p>
         </div>
 
+        <div class="mb-3">
+          <a class="btn btn-primary" href="${pageContext.request.contextPath}/conventions?action=creer">
+            ➕ Générer une convention
+          </a>
+        </div>
+
         <c:choose>
           <c:when test="${empty conventions}">
             <div class="empty-state">

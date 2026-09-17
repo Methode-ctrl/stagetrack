@@ -5,6 +5,16 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title><c:out value="${pageTitle}"/> – StageTrack UPG</title>
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('stagetrack-theme');
+      if (t === 'light' || t === 'dark') {
+        document.documentElement.setAttribute('data-theme', t);
+      }
+    } catch (e) { /* stockage indisponible : on ignore */ }
+  })();
+</script>
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,3 +24,5 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar.css"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components.css"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/animations.css"/>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/theme.css"/>
+<script src="${pageContext.request.contextPath}/js/theme.js"></script>

@@ -36,6 +36,11 @@ public class RapportServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         try {
+            HttpSession sessionVerif = req.getSession(false);
+            if (sessionVerif == null || sessionVerif.getAttribute("utilisateur") == null) {
+                resp.sendRedirect(req.getContextPath() + "/login");
+                return;
+            }
             String action = req.getParameter("action") != null ? req.getParameter("action") : "liste";
 
             switch (action) {

@@ -28,7 +28,7 @@
           <div class="card-body text-center">
             <p class="text-muted mb-1">Note finale</p>
             <p class="note-finale-value" style="font-size:64px;"><c:out value="${note.noteFinale}"/>/20</p>
-            <span class="badge" style="background:#064E3B; color:#34D399;"><c:out value="${note.mention}"/></span>
+            <span class="badge badge-mention"><c:out value="${note.mention}"/></span>
           </div>
         </div>
 

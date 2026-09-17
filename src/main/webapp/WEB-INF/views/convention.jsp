@@ -125,6 +125,21 @@
                     <p class="text-secondary mt-0" style="opacity:0.6;">(signature)</p>
                   </div>
                 </div>
+
+                <c:if test="${sessionScope.role == 'ADMIN'}">
+                  <div class="divider"></div>
+                  <p class="form-label">🔄 Changer le statut de la convention</p>
+                  <form class="flex flex-wrap gap-2" method="post"
+                        action="${pageContext.request.contextPath}/conventions?action=changerStatut">
+                    <input type="hidden" name="id" value="<c:out value="${convention.id}"/>"/>
+                    <select class="form-control" name="statut" style="max-width:220px;">
+                      <option value="EN_ATTENTE" <c:if test="${convention.statut == 'EN_ATTENTE'}">selected</c:if>>En attente</option>
+                      <option value="GENERE" <c:if test="${convention.statut == 'GENERE'}">selected</c:if>>Générée</option>
+                      <option value="SIGNEE" <c:if test="${convention.statut == 'SIGNEE'}">selected</c:if>>Signée</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                  </form>
+                </c:if>
               </div>
               <div class="card-footer">
                 <button type="button" class="btn btn-secondary" onclick="window.print()">🖨️ Imprimer</button>

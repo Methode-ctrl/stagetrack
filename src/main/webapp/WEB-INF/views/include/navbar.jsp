@@ -27,6 +27,12 @@
           <a class="nav-link" href="${pageContext.request.contextPath}/entreprises">
             <span class="nav-icon">🏢</span><span class="nav-text">Entreprises</span>
           </a>
+          <a class="nav-link" href="${pageContext.request.contextPath}/notes">
+            <span class="nav-icon">🏅</span><span class="nav-text">Notes</span>
+          </a>
+          <a class="nav-link" href="${pageContext.request.contextPath}/conventions">
+            <span class="nav-icon">📑</span><span class="nav-text">Conventions</span>
+          </a>
         </c:if>
 
         <c:if test="${role == 'SUPERVISEUR'}">

@@ -29,7 +29,7 @@ public class NoteServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         try {
-            if (!WebUtil.exigerRole(req, resp, Role.ADMIN)) return;
+            if (!WebUtil.exigerRole(req, resp, Role.ADMIN, Role.SUPERVISEUR)) return;
             String action = req.getParameter("action") != null ? req.getParameter("action") : "liste";
 
             if ("noter".equals(action)) {
@@ -53,7 +53,7 @@ public class NoteServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         try {
-            if (!WebUtil.exigerRole(req, resp, Role.ADMIN)) return;
+            if (!WebUtil.exigerRole(req, resp, Role.ADMIN, Role.SUPERVISEUR)) return;
             long rapportId = Long.parseLong(req.getParameter("rapportId"));
             double noteStage = Double.parseDouble(req.getParameter("noteStage"));
             double noteRapport = Double.parseDouble(req.getParameter("noteRapport"));

@@ -13,6 +13,9 @@ import java.util.List;
 @Stateless
 public class ConventionBean {
 
+    private static final java.util.Set<String> STATUTS_AUTORISES =
+            java.util.Set.of("EN_ATTENTE", "GENERE", "SIGNEE");
+
     @PersistenceContext(unitName = "stagetrack-pu")
     private EntityManager em;
 
@@ -56,7 +59,13 @@ public class ConventionBean {
         if (convention == null) {
             throw new IllegalArgumentException("Convention introuvable");
         }
-        convention.setStatut(statut);
+        String valeur = statut == null ? null : statut.trim().toUpperCase();
+        if (valeur == null || !STATUTS_AUTORISES.contains(valeur)) {
+            throw new IllegalArgumentException(
+                    "Statut de convention invalide : « " + statut + " ». Valeurs acceptées : "
+                    + String.join(", ", STATUTS_AUTORISES));
+        }
+        convention.setStatut(valeur);
         return em.merge(convention);
     }
 

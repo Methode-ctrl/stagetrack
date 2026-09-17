@@ -1,5 +1,6 @@
 /* ============================================================
    STAGETRACK — NAVBAR.JS
+   Hamburger mobile, topbar au scroll, lien actif
    ============================================================ */
 (function () {
   'use strict';
@@ -17,6 +18,9 @@
       overlay.style.display = 'block';
     }
     document.body.style.overflow = 'hidden';
+    if (hamburger) {
+      hamburger.setAttribute('aria-expanded', 'true');
+    }
   }
 
   function closeMenu() {
@@ -27,15 +31,32 @@
       overlay.style.display = 'none';
     }
     document.body.style.overflow = '';
+    if (hamburger) {
+      hamburger.setAttribute('aria-expanded', 'false');
+    }
   }
 
   if (hamburger) {
-    hamburger.addEventListener('click', openMenu);
+    hamburger.setAttribute('aria-expanded', 'false');
+    hamburger.addEventListener('click', function () {
+      var isOpen = sidebar && sidebar.classList.contains('open');
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
   }
 
   if (overlay) {
     overlay.addEventListener('click', closeMenu);
   }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeMenu();
+    }
+  });
 
   window.addEventListener('resize', function () {
     if (window.innerWidth > 768) {

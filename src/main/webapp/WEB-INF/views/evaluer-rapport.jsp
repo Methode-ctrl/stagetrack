@@ -19,7 +19,7 @@
 
       <div class="page-content page-content-md">
         <div class="hero">
-          <h1>🏅 <span class="hero-gradient">Attribuer la note finale</span></h1>
+          <h1>📝 <span class="hero-gradient">Évaluer le rapport</span></h1>
           <p>Rapport : <c:out value="${rapport.titre}"/></p>
         </div>
 
@@ -40,53 +40,33 @@
           </div>
         </div>
 
-        <form method="post" action="${pageContext.request.contextPath}/notes">
-          <input type="hidden" name="rapportId" value="<c:out value="${rapport.id}"/>"/>
+        <div class="card mb-4">
+          <div class="card-header"><h3 class="card-title">✅ Décision sur le rapport</h3></div>
+          <div class="card-body">
+            <form method="post" action="${pageContext.request.contextPath}/rapports?action=valider">
+              <input type="hidden" name="id" value="<c:out value="${rapport.id}"/>"/>
+              <p class="text-secondary mt-0">
+                Validez le rapport pour permettre l'attribution de la note finale.
+              </p>
+              <button type="submit" class="btn btn-success btn-lg">✅ Valider le rapport</button>
+            </form>
 
-          <div class="card mb-4">
-            <div class="card-header"><h3 class="card-title">📊 Notes par critère</h3></div>
-            <div class="card-body">
-              <div class="grid-2">
-                <div class="form-group">
-                  <label class="form-label">Note de stage (×40%) <span class="required">*</span></label>
-                  <input class="form-control" type="number" id="noteStage" name="noteStage"
-                         min="0" max="20" step="0.5" required
-                         placeholder="0 à 20"/>
-                  <p class="form-hint">Assiduité, implication, réalisation des tâches.</p>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Note du rapport (×40%) <span class="required">*</span></label>
-                  <input class="form-control" type="number" id="noteRapport" name="noteRapport"
-                         min="0" max="20" step="0.5" required
-                         placeholder="0 à 20"/>
-                  <p class="form-hint">Qualité rédactionnelle, pertinence du contenu.</p>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Note de présentation (×20%) <span class="required">*</span></label>
-                  <input class="form-control" type="number" id="notePresence" name="notePresence"
-                         min="0" max="20" step="0.5" required
-                         placeholder="0 à 20"/>
-                  <p class="form-hint">Soutenance, communication, supports utilisés.</p>
-                </div>
-                <div class="card" style="background:var(--bg-secondary);">
-                  <div class="card-body text-center">
-                    <p class="text-muted mb-0">Note finale calculée</p>
-                    <p class="note-finale-value mt-0" id="noteFinaleAffichee" style="font-size:44px;">—</p>
-                    <p class="mt-1 mb-0"><strong id="mentionAffichee" style="color:var(--text-secondary);">—</strong></p>
-                  </div>
-                </div>
-              </div>
+            <div class="divider"></div>
 
-              <div class="form-group">
-                <label class="form-label">Appréciation <span class="required">*</span></label>
-                <textarea class="form-control" name="appreciation" rows="4" required
-                          placeholder="Rédigez une appréciation détaillée du travail de l'étudiant…"></textarea>
-              </div>
-            </div>
+            <details>
+              <summary class="btn btn-warning btn-sm" style="display:inline-flex;">✏️ Demander une correction</summary>
+              <form class="mt-2" method="post" action="${pageContext.request.contextPath}/rapports?action=corriger">
+                <input type="hidden" name="id" value="<c:out value="${rapport.id}"/>"/>
+                <div class="form-group">
+                  <label class="form-label">Commentaire / motif <span class="required">*</span></label>
+                  <textarea class="form-control" name="commentaire" rows="3" required
+                            placeholder="Expliquez ce qui doit être corrigé…"></textarea>
+                </div>
+                <button type="submit" class="btn btn-warning">Envoyer la demande</button>
+              </form>
+            </details>
           </div>
-
-          <button type="submit" class="btn btn-success btn-lg">✅ Valider et attribuer la note</button>
-        </form>
+        </div>
       </div>
     </div>
   </div>

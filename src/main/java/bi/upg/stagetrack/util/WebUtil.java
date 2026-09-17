@@ -41,10 +41,22 @@ public final class WebUtil {
     }
 
     public static String messageReel(Throwable t) {
+        if (t == null) {
+            return "Erreur inconnue";
+        }
         Throwable cause = t;
-        while (cause instanceof EJBException && cause.getCause() != null) {
+        while (cause.getCause() != null
+                && (cause instanceof EJBException
+                    || cause instanceof jakarta.persistence.PersistenceException)) {
             cause = cause.getCause();
         }
-        return (cause.getMessage() != null ? cause.getMessage() : t.getMessage());
+        String message = cause.getMessage();
+        if (message == null || message.isBlank()) {
+            message = t.getMessage();
+        }
+        if (message == null || message.isBlank()) {
+            message = cause.getClass().getSimpleName();
+        }
+        return message;
     }
 }

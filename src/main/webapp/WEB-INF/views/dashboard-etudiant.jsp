@@ -75,7 +75,7 @@
                   <div class="empty-icon">🎓</div>
                   <h3>Vous n'avez pas encore de stage</h3>
                   <p>Déposez votre offre de stage pour démarrer le processus d'attribution.</p>
-                  <a href="${pageContext.request.contextPath}/offres?action=nouveau" class="btn btn-primary mt-2">Déposer une offre →</a>
+                  <a href="${pageContext.request.contextPath}/offres?action=nouvelle" class="btn btn-primary mt-2">Déposer une offre →</a>
                 </div>
               </div>
             </div>
@@ -98,12 +98,22 @@
                     <span class="badge badge-<c:out value="${offre.statut}"/>"><c:out value="${offre.statut}"/></span>
                   </div>
                   <div class="card-body">
-                    <c:if test="${not empty motifParOffre[offre.id] && (offre.statut == 'DOSSIER_INCOMPLET' || offre.statut == 'EN_CORRECTION')}">
+                    <c:if test="${not empty motifParOffre[offre.id] && offre.statut == 'EN_CORRECTION'}">
                       <div class="alert alert-warning mb-3">
                         <div class="alert-icon">📌</div>
                         <div class="alert-content">
                           <strong>Corrections demandées :</strong> <c:out value="${motifParOffre[offre.id]}"/>
-                          <a href="${pageContext.request.contextPath}/offres?action=detail&amp;id=${offre.id}" class="alert-link">Modifier mon dossier →</a>
+                          <a href="${pageContext.request.contextPath}/rapports?action=resoumettre&amp;offreId=${offre.id}" class="alert-link">Re-soumettre mon rapport →</a>
+                        </div>
+                      </div>
+                    </c:if>
+
+                    <c:if test="${offre.statut == 'DOSSIER_INCOMPLET' && not empty offre.motifRejet}">
+                      <div class="alert alert-warning mb-3">
+                        <div class="alert-icon">📌</div>
+                        <div class="alert-content">
+                          <strong>Corrections demandées :</strong> <c:out value="${offre.motifRejet}"/>
+                          <a href="${pageContext.request.contextPath}/offres?action=modifier&amp;id=${offre.id}" class="alert-link">Modifier mon dossier →</a>
                         </div>
                       </div>
                     </c:if>
@@ -141,15 +151,25 @@
                     <div class="info">
                       <span class="info-label">Dates</span>
                       <span class="info-value">
-                        <fmt:formatDate value="${offre.dateDebut}" pattern="dd MMM yyyy" var="dateDebut"/>
-                        <fmt:formatDate value="${offre.dateFin}" pattern="dd MMM yyyy" var="dateFin"/>
-                        <c:out value="${dateDebut}"/> → <c:out value="${dateFin}"/>
+                        <c:choose>
+                          <c:when test="${not empty offre.dateDebut}">
+                            <c:out value="${offre.dateDebutAffichage}"/>
+                            <c:if test="${not empty offre.dateFin}"> → <c:out value="${offre.dateFinAffichage}"/></c:if>
+                          </c:when>
+                          <c:otherwise>Non définies</c:otherwise>
+                        </c:choose>
                       </span>
                     </div>
 
                     <div class="actions gap-1 mt-3">
                       <a href="${pageContext.request.contextPath}/offres?action=detail&amp;id=${offre.id}" class="btn btn-secondary">Voir le détail →</a>
-                      <c:if test="${offre.statut == 'RAPPORT_SOUMIS' || offre.statut == 'EN_CORRECTION' || offre.statut == 'RAPPORT_VALIDE'}">
+                      <c:if test="${offre.statut == 'STAGE_EN_COURS' || offre.statut == 'PAUSE'}">
+                        <a href="${pageContext.request.contextPath}/rapports?action=nouveau&amp;offreId=${offre.id}" class="btn btn-primary">📝 Soumettre mon rapport →</a>
+                      </c:if>
+                      <c:if test="${offre.statut == 'EN_CORRECTION'}">
+                        <a href="${pageContext.request.contextPath}/rapports?action=resoumettre&amp;offreId=${offre.id}" class="btn btn-warning">✏️ Re-soumettre mon rapport →</a>
+                      </c:if>
+                      <c:if test="${offre.statut == 'RAPPORT_SOUMIS' || offre.statut == 'RAPPORT_VALIDE' || offre.statut == 'NOTE_ATTRIBUEE'}">
                         <a href="${pageContext.request.contextPath}/rapports?action=mon-rapport" class="btn btn-secondary">Mon rapport →</a>
                       </c:if>
                       <a href="${pageContext.request.contextPath}/offres?action=convention" class="btn btn-secondary">Ma convention →</a>

@@ -5,8 +5,10 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Entity
 @Table(name = "offre_stage")
@@ -111,4 +113,14 @@ public class OffreStage implements Serializable {
 
     public List<RapportStage> getRapports() { return rapports; }
     public void setRapports(List<RapportStage> rapports) { this.rapports = rapports; }
+
+    public String getDateDebutAffichage() { return formaterDate(dateDebut); }
+    public String getDateFinAffichage() { return formaterDate(dateFin); }
+
+    private String formaterDate(LocalDate date) {
+        if (date == null) {
+            return "";
+        }
+        return date.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.FRENCH));
+    }
 }

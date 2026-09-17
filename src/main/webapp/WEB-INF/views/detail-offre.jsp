@@ -25,7 +25,22 @@
             <h1>📁 <span class="hero-gradient"><c:out value="${offre.etudiant.utilisateur.prenom}"/> <c:out value="${offre.etudiant.utilisateur.nom}"/></span></h1>
             <p>Dossier de stage n° <c:out value="${offre.id}"/></p>
           </div>
-          <span class="badge">Statut : <c:out value="${offre.statut}"/></span>
+          <span class="badge badge-<c:out value="${offre.statut}"/>">
+            <c:choose>
+              <c:when test="${offre.statut == 'OFFRE_SOUMISE'}">Offre soumise</c:when>
+              <c:when test="${offre.statut == 'EN_VALIDATION'}">En validation</c:when>
+              <c:when test="${offre.statut == 'DOSSIER_INCOMPLET'}">Dossier incomplet</c:when>
+              <c:when test="${offre.statut == 'VALIDEE'}">Validée</c:when>
+              <c:when test="${offre.statut == 'STAGE_EN_COURS'}">Stage en cours</c:when>
+              <c:when test="${offre.statut == 'PAUSE'}">En pause</c:when>
+              <c:when test="${offre.statut == 'RAPPORT_SOUMIS'}">Rapport soumis</c:when>
+              <c:when test="${offre.statut == 'EN_CORRECTION'}">Rapport en correction</c:when>
+              <c:when test="${offre.statut == 'RAPPORT_VALIDE'}">Rapport validé</c:when>
+              <c:when test="${offre.statut == 'NOTE_ATTRIBUEE'}">Note attribuée</c:when>
+              <c:when test="${offre.statut == 'ARCHIVE'}">Archivé</c:when>
+              <c:otherwise><c:out value="${offre.statut}"/></c:otherwise>
+            </c:choose>
+          </span>
         </div>
 
         <div class="card mb-4">

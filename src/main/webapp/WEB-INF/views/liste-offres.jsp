@@ -32,6 +32,7 @@
               <option value="">Tous les statuts</option>
               <option value="OFFRE_SOUMISE" <c:if test="${statutSelectionne == 'OFFRE_SOUMISE'}">selected</c:if>>Offre soumise</option>
               <option value="EN_VALIDATION" <c:if test="${statutSelectionne == 'EN_VALIDATION'}">selected</c:if>>En validation</option>
+              <option value="DOSSIER_INCOMPLET" <c:if test="${statutSelectionne == 'DOSSIER_INCOMPLET'}">selected</c:if>>Dossier incomplet</option>
               <option value="VALIDEE" <c:if test="${statutSelectionne == 'VALIDEE'}">selected</c:if>>Validée</option>
               <option value="STAGE_EN_COURS" <c:if test="${statutSelectionne == 'STAGE_EN_COURS'}">selected</c:if>>Stage en cours</option>
               <option value="PAUSE" <c:if test="${statutSelectionne == 'PAUSE'}">selected</c:if>>En pause</option>

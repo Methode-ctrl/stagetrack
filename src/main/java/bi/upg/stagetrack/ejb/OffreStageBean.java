@@ -94,6 +94,26 @@ public class OffreStageBean {
         return em.merge(offre);
     }
 
+    public OffreStage modifierEtResoumettre(OffreStage donnees) {
+        OffreStage existe = em.find(OffreStage.class, donnees.getId());
+        if (existe == null) throw new IllegalArgumentException("Offre introuvable");
+        if (existe.getStatut() != StatutOffre.DOSSIER_INCOMPLET) {
+            throw new IllegalStateException("Seul un dossier incomplet peut être re-soumis.");
+        }
+        Entreprise entreprise = em.find(Entreprise.class, donnees.getEntreprise().getId());
+        if (entreprise == null) throw new IllegalArgumentException("Entreprise introuvable");
+
+        existe.setEntreprise(entreprise);
+        existe.setTitre(donnees.getTitre());
+        existe.setDescription(donnees.getDescription());
+        existe.setDateDebut(donnees.getDateDebut());
+        existe.setDateFin(donnees.getDateFin());
+        existe.setDureeEnMois(donnees.getDureeEnMois());
+        existe.setMotifRejet(null);
+        existe.setStatut(StatutOffre.EN_VALIDATION);
+        return em.merge(existe);
+    }
+
     public Etudiant findEtudiantByUtilisateurId(Long utilisateurId) {
         TypedQuery<Etudiant> q = em.createQuery(
             "SELECT e FROM Etudiant e WHERE e.utilisateur.id = :uid", Etudiant.class);

@@ -56,9 +56,17 @@ public class OffreStageServlet extends HttpServlet {
                     break;
 
                 case "detail": {
-                    if (!verifierRole(req, resp, Role.ADMIN, Role.SUPERVISEUR)) return;
+                    if (!verifierRole(req, resp, Role.ADMIN, Role.SUPERVISEUR, Role.ETUDIANT)) return;
                     Long id = Long.valueOf(req.getParameter("id"));
                     OffreStage offre = offreBean.trouverOffre(id);
+                    if (offre == null) throw new IllegalArgumentException("Offre introuvable");
+                    if (Role.ETUDIANT.equals(utilisateur.getRole())) {
+                        Etudiant etudiant = offreBean.findEtudiantByUtilisateurId(utilisateur.getId());
+                        if (etudiant == null || !etudiant.getId().equals(offre.getEtudiant().getId())) {
+                            resp.sendRedirect(req.getContextPath() + "/dashboard");
+                            return;
+                        }
+                    }
                     req.setAttribute("offre", offre);
                     req.getRequestDispatcher("/WEB-INF/views/detail-offre.jsp").forward(req, resp);
                     break;
@@ -79,6 +87,25 @@ public class OffreStageServlet extends HttpServlet {
                             ? offreBean.listerParEtudiant(etudiant.getId())
                             : List.of());
                     req.getRequestDispatcher("/WEB-INF/views/liste-offres.jsp").forward(req, resp);
+                    break;
+                }
+
+                case "modifier": {
+                    if (!verifierRole(req, resp, Role.ETUDIANT)) return;
+                    Long idOffre = Long.valueOf(req.getParameter("id"));
+                    OffreStage offre = offreBean.trouverOffre(idOffre);
+                    if (offre == null) throw new IllegalArgumentException("Offre introuvable");
+                    if (offre.getStatut() != StatutOffre.DOSSIER_INCOMPLET) {
+                        resp.sendRedirect(req.getContextPath() + "/offres");
+                        break;
+                    }
+                    Etudiant etudiant = offreBean.findEtudiantByUtilisateurId(utilisateur.getId());
+                    if (etudiant == null || !etudiant.getId().equals(offre.getEtudiant().getId())) {
+                        resp.sendRedirect(req.getContextPath() + "/dashboard");
+                        break;
+                    }
+                    req.setAttribute("offre", offre);
+                    req.getRequestDispatcher("/WEB-INF/views/modifier-dossier.jsp").forward(req, resp);
                     break;
                 }
 
@@ -347,6 +374,58 @@ public class OffreStageServlet extends HttpServlet {
                     resp.sendRedirect(req.getContextPath() + "/offres?action=affecter");
                     break;
 
+                case "resoumettre": {
+                    if (!verifierRole(req, resp, Role.ETUDIANT)) return;
+                    Utilisateur utilisateur = (Utilisateur) session.getAttribute("utilisateur");
+                    Long idOffre = Long.valueOf(req.getParameter("id"));
+                    OffreStage existant = offreBean.trouverOffre(idOffre);
+                    if (existant == null || existant.getStatut() != StatutOffre.DOSSIER_INCOMPLET) {
+                        resp.sendRedirect(req.getContextPath() + "/offres");
+                        break;
+                    }
+                    Etudiant etudiant = offreBean.findEtudiantByUtilisateurId(utilisateur.getId());
+                    if (etudiant == null || !etudiant.getId().equals(existant.getEtudiant().getId())) {
+                        resp.sendRedirect(req.getContextPath() + "/dashboard");
+                        break;
+                    }
+
+                    List<String> erreurs = validerOffreReSoumise(req);
+                    if (!erreurs.isEmpty()) {
+                        req.setAttribute("erreurs", erreurs);
+                        req.setAttribute("offre", existant);
+                        req.getRequestDispatcher("/WEB-INF/views/modifier-dossier.jsp").forward(req, resp);
+                        return;
+                    }
+
+                    String adresse = req.getParameter("adresse");
+                    String ville = req.getParameter("ville");
+                    Entreprise entreprise = offreBean.creerOuTrouverEntreprise(
+                            req.getParameter("nomEntreprise"),
+                            (adresse != null && !adresse.isBlank() ? adresse + ", " : "") + ville,
+                            req.getParameter("telephone"),
+                            req.getParameter("emailContact"),
+                            req.getParameter("secteur"),
+                            req.getParameter("nomResponsable"));
+
+                    OffreStage aCorriger = new OffreStage();
+                    aCorriger.setId(idOffre);
+                    aCorriger.setTitre(req.getParameter("intitulePoste"));
+                    String description = req.getParameter("description");
+                    if (req.getParameter("tachesPrevues") != null && !req.getParameter("tachesPrevues").isBlank()) {
+                        description = (description == null ? "" : description)
+                                + "\n\nTâches prévues :\n" + req.getParameter("tachesPrevues");
+                    }
+                    aCorriger.setDescription(description);
+                    aCorriger.setDateDebut(java.time.LocalDate.parse(req.getParameter("dateDebut")));
+                    aCorriger.setDateFin(java.time.LocalDate.parse(req.getParameter("dateFin")));
+                    aCorriger.setDureeEnMois(Integer.valueOf(req.getParameter("dureeEnMois")));
+                    aCorriger.setEntreprise(entreprise);
+
+                    offreBean.modifierEtResoumettre(aCorriger);
+                    resp.sendRedirect(req.getContextPath() + "/offres");
+                    break;
+                }
+
                 default:
                     resp.sendRedirect(req.getContextPath() + "/offres");
             }
@@ -359,6 +438,20 @@ public class OffreStageServlet extends HttpServlet {
     private List<String> validerOffre(HttpServletRequest req) {
         List<String> erreurs = new ArrayList<>();
         if (isBlank(req.getParameter("titre"))) erreurs.add("Le titre de l'offre est obligatoire.");
+        if (isBlank(req.getParameter("dateDebut"))) erreurs.add("La date de début est obligatoire.");
+        if (isBlank(req.getParameter("dateFin"))) erreurs.add("La date de fin est obligatoire.");
+        if (isBlank(req.getParameter("dureeEnMois"))) erreurs.add("La durée du stage est obligatoire.");
+        return erreurs;
+    }
+
+    private List<String> validerOffreReSoumise(HttpServletRequest req) {
+        List<String> erreurs = new ArrayList<>();
+        if (isBlank(req.getParameter("nomEntreprise"))) erreurs.add("Le nom de l'entreprise est obligatoire.");
+        if (isBlank(req.getParameter("ville"))) erreurs.add("La ville est obligatoire.");
+        if (isBlank(req.getParameter("secteur"))) erreurs.add("Le secteur d'activité est obligatoire.");
+        if (isBlank(req.getParameter("nomResponsable"))) erreurs.add("Le nom du responsable est obligatoire.");
+        if (isBlank(req.getParameter("emailContact"))) erreurs.add("L'e-mail de contact est obligatoire.");
+        if (isBlank(req.getParameter("intitulePoste"))) erreurs.add("L'intitulé du poste est obligatoire.");
         if (isBlank(req.getParameter("dateDebut"))) erreurs.add("La date de début est obligatoire.");
         if (isBlank(req.getParameter("dateFin"))) erreurs.add("La date de fin est obligatoire.");
         if (isBlank(req.getParameter("dureeEnMois"))) erreurs.add("La durée du stage est obligatoire.");

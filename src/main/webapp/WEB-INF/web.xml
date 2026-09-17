@@ -17,4 +17,10 @@
         </jsp-property-group>
     </jsp-config>
 
+    <!-- Page d'erreur stylée (thème sombre/clair) au lieu de la page par défaut -->
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/views/erreur.jsp</location>
+    </error-page>
+
 </web-app>
